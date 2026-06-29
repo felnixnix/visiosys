@@ -6,13 +6,17 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Visiosys.Application.Andamentos;
 using Visiosys.Application.Auth;
+using Visiosys.Application.Auditoria;
 using Visiosys.Application.Clientes;
 using Visiosys.Application.Documentos;
 using Visiosys.Application.Precatorios;
+using Visiosys.Domain.Andamentos;
 using Visiosys.Domain.Clientes;
 using Visiosys.Domain.Documentos;
 using Visiosys.Domain.Precatorios;
+using Visiosys.Infrastructure.Auditoria;
 using Visiosys.Infrastructure.Persistence;
 using Visiosys.Infrastructure.Persistence.Repositories;
 using Visiosys.Infrastructure.Storage;
@@ -67,6 +71,10 @@ try
     builder.Services.AddScoped<IArmazenamentoService, LocalArmazenamentoService>();
     builder.Services.AddScoped<UploadDocumentoUseCase>();
     builder.Services.AddScoped<ObterDocumentoPorIdUseCase>();
+    builder.Services.AddScoped<IAndamentoRepository, AndamentoRepository>();
+    builder.Services.AddScoped<RegistrarAndamentoUseCase>();
+    builder.Services.AddScoped<ListarAndamentosUseCase>();
+    builder.Services.AddSingleton<IAuditLogService, MongoAuditLogService>();
     builder.Services.AddScoped<GerarTokenUseCase>();
 
     // Autenticação JWT (RNF09)
