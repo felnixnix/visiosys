@@ -8,11 +8,14 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using Visiosys.Application.Auth;
 using Visiosys.Application.Clientes;
+using Visiosys.Application.Documentos;
 using Visiosys.Application.Precatorios;
 using Visiosys.Domain.Clientes;
+using Visiosys.Domain.Documentos;
 using Visiosys.Domain.Precatorios;
 using Visiosys.Infrastructure.Persistence;
 using Visiosys.Infrastructure.Persistence.Repositories;
+using Visiosys.Infrastructure.Storage;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -60,6 +63,10 @@ try
     builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
     builder.Services.AddScoped<CriarClienteUseCase>();
     builder.Services.AddScoped<ObterClientePorIdUseCase>();
+    builder.Services.AddScoped<IDocumentoRepository, DocumentoRepository>();
+    builder.Services.AddScoped<IArmazenamentoService, LocalArmazenamentoService>();
+    builder.Services.AddScoped<UploadDocumentoUseCase>();
+    builder.Services.AddScoped<ObterDocumentoPorIdUseCase>();
     builder.Services.AddScoped<GerarTokenUseCase>();
 
     // Autenticação JWT (RNF09)

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Visiosys.Domain.Clientes;
+using Visiosys.Domain.Documentos;
 using Visiosys.Domain.Precatorios;
 
 namespace Visiosys.Infrastructure.Persistence;
@@ -10,6 +11,7 @@ public class VisiosysDbContext : DbContext
 
     public DbSet<Precatorio> Precatorios => Set<Precatorio>();
     public DbSet<Cliente> Clientes => Set<Cliente>();
+    public DbSet<Documento> Documentos => Set<Documento>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
