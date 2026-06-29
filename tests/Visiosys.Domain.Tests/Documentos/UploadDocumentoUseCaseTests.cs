@@ -67,6 +67,9 @@ internal sealed class FakeDocumentoRepositoryDoc : IDocumentoRepository
         return Task.CompletedTask;
     }
 
+    public Task<IReadOnlyList<Documento>> ListarPorPrecatorioAsync(Guid precatorioId, CancellationToken ct = default)
+        => Task.FromResult<IReadOnlyList<Documento>>(_store.Where(d => d.PrecatorioId == precatorioId).ToList());
+
     public Task SalvarAsync(CancellationToken ct = default) => Task.CompletedTask;
 }
 

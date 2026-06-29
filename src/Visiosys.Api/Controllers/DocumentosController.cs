@@ -10,7 +10,8 @@ namespace Visiosys.Api.Controllers;
 [Route("api/documentos")]
 public class DocumentosController(
     UploadDocumentoUseCase uploadUseCase,
-    ObterDocumentoPorIdUseCase obterUseCase) : ControllerBase
+    ObterDocumentoPorIdUseCase obterUseCase,
+    ListarDocumentosUseCase listarUseCase) : ControllerBase
 {
     [HttpPost]
     [ProducesResponseType(typeof(DocumentoDto), StatusCodes.Status201Created)]
@@ -51,6 +52,14 @@ public class DocumentosController(
         {
             return BadRequest(new { erro = ex.Message });
         }
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(IReadOnlyList<DocumentoDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> Listar([FromQuery] Guid precatorioId, CancellationToken ct)
+    {
+        var dtos = await listarUseCase.ExecutarAsync(precatorioId, ct);
+        return Ok(dtos);
     }
 
     [HttpGet("{id:guid}")]

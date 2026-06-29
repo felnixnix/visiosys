@@ -35,3 +35,52 @@ export interface TokenDto {
 export interface ApiErro {
   erro: string;
 }
+
+export type TipoAndamento =
+  | 'AtualizacaoStatus'
+  | 'DocumentoRecebido'
+  | 'ContatoRealizado'
+  | 'ObservacaoInterna'
+  | 'PropostaEnviada'
+  | 'PropostaRecebida'
+  | 'PagamentoRegistrado';
+
+export interface AndamentoDto {
+  id: string;
+  precatorioId: string;
+  descricao: string;
+  tipo: TipoAndamento;
+  registradoPorLogin: string;
+  ocorridoEm: string;
+}
+
+export interface PagamentoDto {
+  id: string;
+  precatorioId: string;
+  valorPago: number;
+  valorBase: number;
+  percDesagio: number;
+  registradoPorLogin: string;
+  pagoEm: string;
+  criadoEm: string;
+}
+
+export type TipoDocumento =
+  | 'Procuracao'
+  | 'Certidao'
+  | 'Contrato'
+  | 'Peticao'
+  | 'Outro';
+
+export interface DocumentoDto {
+  id: string;
+  nomeOriginal: string;
+  tipo: TipoDocumento;
+  urlDownload: string;
+  tamanhoBytes: number;
+  contentType: string;
+  enviadoPorLogin: string;
+  precatorioId: string | null;
+  clienteId: string | null;
+  criadoEm: string;
+}

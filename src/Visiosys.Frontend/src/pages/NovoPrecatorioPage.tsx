@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { criarPrecatorio } from '../api/precatorios';
+import { precatoriosApi } from '../api/precatorios';
 import { ApiError } from '../api/client';
 
 export function NovoPrecatorioPage() {
@@ -18,7 +18,7 @@ export function NovoPrecatorioPage() {
     setErro('');
     setCarregando(true);
     try {
-      await criarPrecatorio({
+      await precatoriosApi.criar({
         numero,
         tribunalOrigem: tribunal,
         valorFace: parseFloat(valorFace.replace(',', '.')),

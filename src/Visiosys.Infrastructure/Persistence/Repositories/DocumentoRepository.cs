@@ -9,6 +9,12 @@ public class DocumentoRepository(VisiosysDbContext context) : IDocumentoReposito
     public async Task<Documento?> ObterPorIdAsync(Guid id, CancellationToken ct = default)
         => await context.Documentos.FirstOrDefaultAsync(d => d.Id == id, ct);
 
+    public async Task<IReadOnlyList<Documento>> ListarPorPrecatorioAsync(Guid precatorioId, CancellationToken ct = default)
+        => await context.Documentos
+            .Where(d => d.PrecatorioId == precatorioId)
+            .OrderByDescending(d => d.CriadoEm)
+            .ToListAsync(ct);
+
     public async Task AdicionarAsync(Documento documento, CancellationToken ct = default)
         => await context.Documentos.AddAsync(documento, ct);
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { listarPrecatorios } from '../api/precatorios';
+import { precatoriosApi } from '../api/precatorios';
 import type { PaginaDto, PrecatorioDto } from '../types';
 
 const STATUS_LABEL: Record<string, string> = {
@@ -33,7 +33,7 @@ export function PrecatoriosPage() {
   useEffect(() => {
     let cancelado = false;
     setErro('');
-    listarPrecatorios(pagina)
+    precatoriosApi.listar(pagina)
       .then(res => { if (!cancelado) setDados(res); })
       .catch(() => { if (!cancelado) setErro('Erro ao carregar precatórios.'); });
     return () => { cancelado = true; };

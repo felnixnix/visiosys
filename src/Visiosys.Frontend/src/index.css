@@ -109,3 +109,26 @@ body { margin: 0; }
 /* Feedback */
 .erro    { color: var(--danger); font-size: .85rem; margin: .5rem 0; }
 .carregando, .vazio { color: var(--gray-600); padding: 2rem; text-align: center; }
+
+/* Abas */
+.abas { display: flex; gap: .25rem; border-bottom: 2px solid var(--gray-200); margin-top: 1rem; }
+.aba-btn {
+  background: none; border: none; padding: .6rem 1rem;
+  cursor: pointer; font-size: .875rem; color: var(--gray-600);
+  border-bottom: 2px solid transparent; margin-bottom: -2px;
+}
+.aba-btn:hover { color: var(--primary); }
+.aba-ativa { color: var(--primary) !important; border-bottom-color: var(--primary) !important; font-weight: 600; }
+
+/* Info grid */
+.info-grid { display: grid; grid-template-columns: 160px 1fr; gap: .5rem 1rem; margin: 0; }
+.info-grid dt { font-weight: 600; font-size: .8rem; color: var(--gray-600); align-self: center; }
+.info-grid dd { margin: 0; font-size: .9rem; }
+
+/* Timeline andamentos */
+.timeline { display: flex; flex-direction: column; gap: .75rem; }
+.timeline-item {
+  background: white; padding: 1rem; border-radius: var(--radius);
+  box-shadow: var(--shadow); border-left: 3px solid var(--primary);
+}
+.timeline-header { display: flex; align-items: center; justify-content: space-between; }

@@ -93,6 +93,7 @@ try
     }
     builder.Services.AddScoped<UploadDocumentoUseCase>();
     builder.Services.AddScoped<ObterDocumentoPorIdUseCase>();
+    builder.Services.AddScoped<ListarDocumentosUseCase>();
     builder.Services.AddScoped<IAndamentoRepository, AndamentoRepository>();
     builder.Services.AddScoped<RegistrarAndamentoUseCase>();
     builder.Services.AddScoped<ListarAndamentosUseCase>();

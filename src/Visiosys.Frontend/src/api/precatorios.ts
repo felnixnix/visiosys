@@ -1,16 +1,6 @@
 import { api } from './client';
 import type { PaginaDto, PrecatorioDto } from '../types';
 
-export function listarPrecatorios(pagina = 1, tamanho = 20) {
-  return api.get<PaginaDto<PrecatorioDto>>(
-    `/precatorios?pagina=${pagina}&tamanho=${tamanho}`
-  );
-}
-
-export function obterPrecatorio(id: string) {
-  return api.get<PrecatorioDto>(`/precatorios/${id}`);
-}
-
 export interface CriarPrecatorioPayload {
   numero: string;
   tribunalOrigem: string;
@@ -19,6 +9,13 @@ export interface CriarPrecatorioPayload {
   natureza: number;
 }
 
-export function criarPrecatorio(payload: CriarPrecatorioPayload) {
-  return api.post<PrecatorioDto>('/precatorios', payload);
-}
+export const precatoriosApi = {
+  listar: (pagina = 1, tamanho = 20) =>
+    api.get<PaginaDto<PrecatorioDto>>(`/precatorios?pagina=${pagina}&tamanho=${tamanho}`),
+
+  obterPorId: (id: string) =>
+    api.get<PrecatorioDto>(`/precatorios/${id}`),
+
+  criar: (payload: CriarPrecatorioPayload) =>
+    api.post<PrecatorioDto>('/precatorios', payload),
+};
