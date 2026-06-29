@@ -1,0 +1,28 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.userprefs
+
+## Logs e dados locais
+*.log
+*.sqlite
+*.db
+
+## Variáveis de ambiente (nunca commitar segredos)
+.env
+.env.local
+.env.*.local
+
+## Docker volumes locais
+docker-data/
+
+## IDE
+.idea/
+.vscode/
+
+## OS
+Thumbs.db
+.DS_Store
