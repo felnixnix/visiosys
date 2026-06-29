@@ -5,8 +5,8 @@ namespace Visiosys.Domain.Precatorios;
 public class Precatorio
 {
     public Guid Id { get; private set; }
-    public string Numero { get; private set; }
-    public string TribunalOrigem { get; private set; }
+    public string Numero { get; private set; } = null!;
+    public string TribunalOrigem { get; private set; } = null!;
     public decimal ValorFace { get; private set; }
     public decimal? ValorAtualizado { get; private set; }
     public EsferaPrecatorio Esfera { get; private set; }
