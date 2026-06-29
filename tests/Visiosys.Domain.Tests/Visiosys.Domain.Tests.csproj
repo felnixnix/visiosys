@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Visiosys.Domain\Visiosys.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Visiosys.Application\Visiosys.Application.csproj" />
   </ItemGroup>
 
 </Project>
