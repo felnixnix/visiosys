@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Visiosys.Application.Precatorios;
 
 namespace Visiosys.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/precatorios")]
 public class PrecatoriosController(
