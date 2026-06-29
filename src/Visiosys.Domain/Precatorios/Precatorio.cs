@@ -14,7 +14,6 @@ public class Precatorio
     public StatusPrecatorio Status { get; private set; }
     public DateTime CriadoEm { get; private set; }
     public DateTime AtualizadoEm { get; private set; }
-    public byte[] RowVersion { get; private set; } = [];
 
     private Precatorio() { }
 

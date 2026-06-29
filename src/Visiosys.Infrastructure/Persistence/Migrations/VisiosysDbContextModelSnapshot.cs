@@ -51,13 +51,6 @@ namespace Visiosys.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("numero");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea")
-                        .HasColumnName("row_version");
-
                     b.Property<int>("Status")
                         .HasColumnType("integer")
                         .HasColumnName("status");
@@ -75,6 +68,12 @@ namespace Visiosys.Infrastructure.Persistence.Migrations
                     b.Property<decimal>("ValorFace")
                         .HasColumnType("numeric(18,2)")
                         .HasColumnName("valor_face");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
 
                     b.HasKey("Id");
 

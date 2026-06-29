@@ -25,7 +25,7 @@ namespace Visiosys.Infrastructure.Persistence.Migrations
                     status = table.Column<int>(type: "integer", nullable: false),
                     criado_em = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     atualizado_em = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    row_version = table.Column<byte[]>(type: "bytea", rowVersion: true, nullable: false)
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false)
                 },
                 constraints: table =>
                 {

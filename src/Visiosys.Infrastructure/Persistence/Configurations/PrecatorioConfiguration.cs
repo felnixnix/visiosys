@@ -57,9 +57,8 @@ public class PrecatorioConfiguration : IEntityTypeConfiguration<Precatorio>
             .HasColumnName("atualizado_em")
             .IsRequired();
 
-        // Concorrência Otimista — impede Lost Updates (RNF15)
-        builder.Property(p => p.RowVersion)
-            .HasColumnName("row_version")
-            .IsRowVersion();
+        // Concorrência Otimista via xmin — coluna de sistema do PostgreSQL,
+        // alterada automaticamente a cada UPDATE sem necessidade de coluna extra (RNF15)
+        builder.UseXminAsConcurrencyToken();
     }
 }
