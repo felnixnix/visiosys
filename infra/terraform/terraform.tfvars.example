@@ -1,0 +1,16 @@
+# Copiar para terraform.tfvars e preencher ANTES do primeiro apply.
+# NUNCA commitar terraform.tfvars (já está no .gitignore).
+
+aws_region        = "sa-east-1"
+environment       = "prod"
+ec2_instance_type = "t4g.medium"
+ec2_key_pair_name = "visiosys-prod"       # Key pair criado na console AWS
+allowed_ssh_cidr  = "203.0.113.0/32"      # Substitua pelo seu IP público
+
+rds_instance_class = "db.t4g.micro"
+rds_username       = "visiosys_prod"
+rds_password       = "SUBSTITUIR_POR_SENHA_FORTE_MINIMO_16_CHARS"
+
+# Opcional: deixar vazio se ainda não tiver domínio
+domain_name = ""
+# domain_name = "visiosys.com.br"

@@ -1,0 +1,139 @@
+name: Deploy Produção
+
+on:
+  # Deploy manual via GitHub UI com escolha de componente
+  workflow_dispatch:
+    inputs:
+      componente:
+        description: "Componente a deployar"
+        required: true
+        default: "all"
+        type: choice
+        options: [all, api, worker]
+
+  # Deploy automático em push para main (após CI verde)
+  push:
+    branches: ["main"]
+
+jobs:
+  build-and-test:
+    name: Build, Testes e Publicação
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurar .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restaurar dependências
+        run: dotnet restore
+
+      - name: Testes de domínio
+        run: dotnet test tests/Visiosys.Domain.Tests/Visiosys.Domain.Tests.csproj --configuration Release --logger "console;verbosity=minimal"
+
+      - name: Testes de integração
+        run: dotnet test tests/Visiosys.Integration.Tests/Visiosys.Integration.Tests.csproj --configuration Release --logger "console;verbosity=minimal"
+
+      # Build self-contained para linux-arm64 (EC2 Graviton)
+      - name: Publicar API (linux-arm64)
+        run: |
+          dotnet publish src/Visiosys.Api/Visiosys.Api.csproj \
+            --configuration Release \
+            --runtime linux-arm64 \
+            --self-contained true \
+            -p:PublishSingleFile=true \
+            -p:EnableCompressionInSingleFile=true \
+            --output publish/api
+
+      - name: Publicar Worker (linux-arm64)
+        run: |
+          dotnet publish src/Visiosys.Worker/Visiosys.Worker.csproj \
+            --configuration Release \
+            --runtime linux-arm64 \
+            --self-contained true \
+            -p:PublishSingleFile=true \
+            -p:EnableCompressionInSingleFile=true \
+            --output publish/worker
+
+      # Build do frontend (inclui o output em wwwroot/ que já vai junto com a API)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: src/Visiosys.Frontend/package-lock.json
+
+      - name: Build Frontend
+        working-directory: src/Visiosys.Frontend
+        run: |
+          npm ci
+          npm run build
+
+      - name: Empacotar artefatos
+        run: |
+          tar -czf api.tar.gz -C publish/api .
+          tar -czf worker.tar.gz -C publish/worker .
+
+      - name: Upload artefatos
+        uses: actions/upload-artifact@v4
+        with:
+          name: publish-artifacts
+          path: |
+            api.tar.gz
+            worker.tar.gz
+          retention-days: 7
+
+  deploy:
+    name: Deploy EC2
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download artefatos
+        uses: actions/download-artifact@v4
+        with:
+          name: publish-artifacts
+
+      - name: Configurar SSH
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          ssh-keyscan -H "${{ secrets.EC2_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Enviar artefatos para EC2
+        run: |
+          COMPONENTE="${{ github.event.inputs.componente || 'all' }}"
+
+          if [[ "$COMPONENTE" == "api" || "$COMPONENTE" == "all" ]]; then
+            ssh ubuntu@${{ secrets.EC2_HOST }} "mkdir -p /opt/visiosys/api.new"
+            scp api.tar.gz ubuntu@${{ secrets.EC2_HOST }}:/tmp/api.tar.gz
+            ssh ubuntu@${{ secrets.EC2_HOST }} "tar -xzf /tmp/api.tar.gz -C /opt/visiosys/api.new && chmod +x /opt/visiosys/api.new/Visiosys.Api"
+          fi
+
+          if [[ "$COMPONENTE" == "worker" || "$COMPONENTE" == "all" ]]; then
+            ssh ubuntu@${{ secrets.EC2_HOST }} "mkdir -p /opt/visiosys/worker.new"
+            scp worker.tar.gz ubuntu@${{ secrets.EC2_HOST }}:/tmp/worker.tar.gz
+            ssh ubuntu@${{ secrets.EC2_HOST }} "tar -xzf /tmp/worker.tar.gz -C /opt/visiosys/worker.new && chmod +x /opt/visiosys/worker.new/Visiosys.Worker"
+          fi
+
+      - name: Executar deploy remoto
+        run: |
+          COMPONENTE="${{ github.event.inputs.componente || 'all' }}"
+          scp infra/scripts/deploy.sh ubuntu@${{ secrets.EC2_HOST }}:/tmp/deploy.sh
+          ssh ubuntu@${{ secrets.EC2_HOST }} "chmod +x /tmp/deploy.sh && /tmp/deploy.sh ${COMPONENTE}"
+
+      - name: Health check
+        run: |
+          sleep 5
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.EC2_HOST }}/health)
+          if [[ "$HTTP_STATUS" != "200" ]]; then
+            echo "Health check falhou: HTTP $HTTP_STATUS"
+            exit 1
+          fi
+          echo "Health check OK: HTTP $HTTP_STATUS"

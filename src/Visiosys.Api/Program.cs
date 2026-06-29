@@ -1,3 +1,5 @@
+using Amazon;
+using Amazon.S3;
 using System.Text;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -74,7 +76,21 @@ try
     builder.Services.AddScoped<CriarClienteUseCase>();
     builder.Services.AddScoped<ObterClientePorIdUseCase>();
     builder.Services.AddScoped<IDocumentoRepository, DocumentoRepository>();
-    builder.Services.AddScoped<IArmazenamentoService, LocalArmazenamentoService>();
+    // Em produção, Storage:S3Bucket deve estar configurado via env var.
+    // Em dev local, usa stub que gera chave/URL sem subir arquivo.
+    // Em produção, Storage:S3Bucket deve estar configurado via env var.
+    // EC2 usa IAM Role — sem credenciais explícitas no código.
+    // Em dev local, usa stub que gera chave/URL sem subir arquivo.
+    if (builder.Configuration["Storage:S3Bucket"] is { Length: > 0 })
+    {
+        builder.Services.AddSingleton<IAmazonS3>(_ =>
+            new AmazonS3Client(RegionEndpoint.SAEast1));
+        builder.Services.AddScoped<IArmazenamentoService, S3ArmazenamentoService>();
+    }
+    else
+    {
+        builder.Services.AddScoped<IArmazenamentoService, LocalArmazenamentoService>();
+    }
     builder.Services.AddScoped<UploadDocumentoUseCase>();
     builder.Services.AddScoped<ObterDocumentoPorIdUseCase>();
     builder.Services.AddScoped<IAndamentoRepository, AndamentoRepository>();

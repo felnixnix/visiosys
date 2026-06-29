@@ -22,6 +22,13 @@ appsettings.*.local.json
 secrets.json
 **/secrets.json
 
+## Terraform (nunca commitar estado ou valores reais)
+infra/terraform/.terraform/
+infra/terraform/terraform.tfstate
+infra/terraform/terraform.tfstate.backup
+infra/terraform/.terraform.lock.hcl
+infra/terraform/terraform.tfvars
+
 ## Docker volumes locais
 docker-data/
 
