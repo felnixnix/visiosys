@@ -9,8 +9,20 @@ namespace Visiosys.Api.Controllers;
 [Route("api/precatorios")]
 public class PrecatoriosController(
     CriarPrecatorioUseCase criarUseCase,
-    ObterPrecatorioPorIdUseCase obterUseCase) : ControllerBase
+    ObterPrecatorioPorIdUseCase obterUseCase,
+    ListarPrecatoriosUseCase listarUseCase) : ControllerBase
 {
+    [HttpGet]
+    [ProducesResponseType(typeof(PaginaDto<PrecatorioDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> Listar(
+        [FromQuery] int pagina = 1,
+        [FromQuery] int tamanho = 20,
+        CancellationToken ct = default)
+    {
+        var resultado = await listarUseCase.ExecutarAsync(pagina, tamanho, ct);
+        return Ok(resultado);
+    }
+
     [HttpPost]
     [ProducesResponseType(typeof(PrecatorioDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]

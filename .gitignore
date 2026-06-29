@@ -26,3 +26,9 @@ docker-data/
 ## OS
 Thumbs.db
 .DS_Store
+
+## Frontend
+src/Visiosys.Frontend/node_modules/
+src/Visiosys.Frontend/dist/
+src/Visiosys.Api/wwwroot/assets/
+src/Visiosys.Api/wwwroot/index.html

@@ -16,6 +16,7 @@ using Visiosys.Application.Precatorios;
 using Visiosys.Domain.Andamentos;
 using Visiosys.Domain.Clientes;
 using Visiosys.Domain.Pagamentos;
+using Visiosys.Domain.Precatorios.Queries;
 using Visiosys.Domain.Documentos;
 using Visiosys.Domain.Precatorios;
 using Visiosys.Infrastructure.Auditoria;
@@ -64,8 +65,11 @@ try
 
     // Repositórios e casos de uso
     builder.Services.AddScoped<IPrecatorioRepository, PrecatorioRepository>();
+    builder.Services.AddScoped<IPrecatorioConsultaRepository>(sp =>
+        (PrecatorioRepository)sp.GetRequiredService<IPrecatorioRepository>());
     builder.Services.AddScoped<CriarPrecatorioUseCase>();
     builder.Services.AddScoped<ObterPrecatorioPorIdUseCase>();
+    builder.Services.AddScoped<ListarPrecatoriosUseCase>();
     builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
     builder.Services.AddScoped<CriarClienteUseCase>();
     builder.Services.AddScoped<ObterClientePorIdUseCase>();
@@ -125,6 +129,8 @@ try
     }
 
     app.UseHttpsRedirection();
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
     app.UseRateLimiter();
     app.UseAuthentication();
     app.UseAuthorization();

@@ -24,4 +24,13 @@ public class PrecatorioRepository(VisiosysDbContext context)
         => await context.Precatorios
             .Where(p => p.Status != StatusPrecatorio.Liquidado && p.Status != StatusPrecatorio.Cancelado)
             .ToListAsync(ct);
+
+    public async Task<IReadOnlyList<Precatorio>> ListarAsync(int skip = 0, int take = 50, CancellationToken ct = default)
+        => await context.Precatorios
+            .OrderByDescending(p => p.CriadoEm)
+            .Skip(skip).Take(take)
+            .ToListAsync(ct);
+
+    public Task<int> ContarAsync(CancellationToken ct = default)
+        => context.Precatorios.CountAsync(ct);
 }

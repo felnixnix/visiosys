@@ -1,0 +1,111 @@
+:root {
+  --primary: #1d4ed8;
+  --primary-hover: #1e40af;
+  --danger: #dc2626;
+  --success: #16a34a;
+  --warning: #d97706;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-600: #4b5563;
+  --gray-800: #1f2937;
+  --radius: 6px;
+  --shadow: 0 1px 3px rgba(0,0,0,.12);
+  font: 14px/1.5 system-ui, 'Segoe UI', sans-serif;
+  color: var(--gray-800);
+  background: var(--gray-50);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; }
+
+/* Layout */
+.layout { display: flex; flex-direction: column; min-height: 100vh; }
+
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 1.5rem; height: 52px;
+  background: var(--primary); color: white;
+  box-shadow: var(--shadow);
+}
+.header a, .header .btn-link { color: white; text-decoration: none; }
+.logo { font-size: 1.1rem; font-weight: 700; letter-spacing: .5px; }
+.header nav { display: flex; align-items: center; gap: 1.5rem; }
+
+.main { flex: 1; padding: 1.5rem; max-width: 1200px; margin: 0 auto; width: 100%; }
+
+/* Login */
+.login-container {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+}
+.login-card {
+  background: white; padding: 2.5rem 2rem;
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  width: 100%; max-width: 360px;
+}
+.login-card h1 { margin: 0 0 .25rem; font-size: 1.5rem; color: var(--primary); }
+.subtitle { color: var(--gray-600); font-size: .85rem; margin-bottom: 1.5rem; }
+
+/* Forms */
+.field { margin-bottom: 1rem; }
+.field label { display: block; font-size: .8rem; font-weight: 600; margin-bottom: .3rem; color: var(--gray-600); }
+.field input, .field select {
+  width: 100%; padding: .5rem .75rem;
+  border: 1px solid var(--gray-200); border-radius: var(--radius);
+  font-size: .9rem; outline: none; background: white;
+}
+.field input:focus, .field select:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(29,78,216,.15); }
+
+.form-container { max-width: 560px; }
+.form { background: white; padding: 1.5rem; border-radius: var(--radius); box-shadow: var(--shadow); }
+
+.actions { display: flex; gap: .75rem; justify-content: flex-end; margin-top: 1.5rem; }
+
+/* Buttons */
+.btn-primary {
+  padding: .5rem 1.1rem; background: var(--primary); color: white;
+  border: none; border-radius: var(--radius); cursor: pointer; font-size: .875rem; font-weight: 500;
+  text-decoration: none; display: inline-flex; align-items: center;
+}
+.btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
+.btn-primary:disabled { opacity: .6; cursor: not-allowed; }
+
+.btn-secondary {
+  padding: .5rem 1.1rem; background: white; color: var(--gray-800);
+  border: 1px solid var(--gray-200); border-radius: var(--radius);
+  cursor: pointer; font-size: .875rem;
+}
+.btn-secondary:hover:not(:disabled) { background: var(--gray-100); }
+.btn-secondary:disabled { opacity: .5; cursor: not-allowed; }
+
+.btn-link { background: none; border: none; cursor: pointer; font-size: .875rem; padding: .25rem; }
+
+/* Table */
+.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.page-header h2 { margin: 0; }
+
+.tabela {
+  width: 100%; border-collapse: collapse;
+  background: white; border-radius: var(--radius);
+  box-shadow: var(--shadow); overflow: hidden;
+}
+.tabela th, .tabela td { padding: .7rem 1rem; text-align: left; }
+.tabela th { background: var(--gray-100); font-weight: 600; font-size: .78rem; text-transform: uppercase; color: var(--gray-600); }
+.tabela td { border-top: 1px solid var(--gray-100); }
+.tabela a { color: var(--primary); text-decoration: none; font-weight: 500; }
+.tabela tr:hover td { background: var(--gray-50); }
+
+.paginacao { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 1rem; color: var(--gray-600); font-size: .85rem; }
+
+/* Badges */
+.badge { display: inline-block; padding: .2rem .55rem; border-radius: 999px; font-size: .75rem; font-weight: 600; }
+.badge-blue   { background: #dbeafe; color: #1d4ed8; }
+.badge-yellow { background: #fef3c7; color: #b45309; }
+.badge-orange { background: #ffedd5; color: #c2410c; }
+.badge-purple { background: #ede9fe; color: #7c3aed; }
+.badge-green  { background: #dcfce7; color: #15803d; }
+.badge-red    { background: #fee2e2; color: #b91c1c; }
+
+/* Feedback */
+.erro    { color: var(--danger); font-size: .85rem; margin: .5rem 0; }
+.carregando, .vazio { color: var(--gray-600); padding: 2rem; text-align: center; }
