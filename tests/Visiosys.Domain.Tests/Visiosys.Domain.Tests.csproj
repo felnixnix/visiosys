@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Visiosys.Domain\Visiosys.Domain.csproj" />
     <ProjectReference Include="..\..\src\Visiosys.Application\Visiosys.Application.csproj" />
+    <ProjectReference Include="..\..\src\Visiosys.Worker\Visiosys.Worker.csproj" />
   </ItemGroup>
 
 </Project>
