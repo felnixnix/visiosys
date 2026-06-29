@@ -137,6 +137,10 @@ try
     app.MapControllers();
     app.MapHealthChecks("/health");
 
+    // Fallback para React Router — rotas client-side como /precatorios/novo
+    // ao receber F5 retornam index.html em vez de 404
+    app.MapFallbackToFile("index.html");
+
     app.Run();
 }
 catch (Exception ex)

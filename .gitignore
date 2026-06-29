@@ -16,6 +16,12 @@ obj/
 .env.local
 .env.*.local
 
+## Configurações de produção e secrets (nunca commitar)
+appsettings.Production.json
+appsettings.*.local.json
+secrets.json
+**/secrets.json
+
 ## Docker volumes locais
 docker-data/
 

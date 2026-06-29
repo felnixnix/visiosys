@@ -38,6 +38,8 @@ public class ClienteConfiguration : IEntityTypeConfiguration<Cliente>
         builder.Property(c => c.CriadoEm).HasColumnName("criado_em").IsRequired();
         builder.Property(c => c.AtualizadoEm).HasColumnName("atualizado_em").IsRequired();
 
+#pragma warning disable CS0618
         builder.UseXminAsConcurrencyToken();
+#pragma warning restore CS0618
     }
 }

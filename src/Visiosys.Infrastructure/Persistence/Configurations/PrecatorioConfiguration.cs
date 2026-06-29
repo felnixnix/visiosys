@@ -57,8 +57,11 @@ public class PrecatorioConfiguration : IEntityTypeConfiguration<Precatorio>
             .HasColumnName("atualizado_em")
             .IsRequired();
 
-        // Concorrência Otimista via xmin — coluna de sistema do PostgreSQL,
-        // alterada automaticamente a cada UPDATE sem necessidade de coluna extra (RNF15)
+        // Concorrência Otimista via xmin — coluna de sistema do PostgreSQL.
+        // UseXminAsConcurrencyToken é marcada obsoleta mas é a única forma correta aqui:
+        // a alternativa com shadow property geraria migration que tenta criar xmin (coluna de sistema, não-criável via DDL).
+#pragma warning disable CS0618
         builder.UseXminAsConcurrencyToken();
+#pragma warning restore CS0618
     }
 }
