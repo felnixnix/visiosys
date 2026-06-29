@@ -7,7 +7,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Visiosys.Application.Auth;
+using Visiosys.Application.Clientes;
 using Visiosys.Application.Precatorios;
+using Visiosys.Domain.Clientes;
 using Visiosys.Domain.Precatorios;
 using Visiosys.Infrastructure.Persistence;
 using Visiosys.Infrastructure.Persistence.Repositories;
@@ -55,6 +57,9 @@ try
     builder.Services.AddScoped<IPrecatorioRepository, PrecatorioRepository>();
     builder.Services.AddScoped<CriarPrecatorioUseCase>();
     builder.Services.AddScoped<ObterPrecatorioPorIdUseCase>();
+    builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+    builder.Services.AddScoped<CriarClienteUseCase>();
+    builder.Services.AddScoped<ObterClientePorIdUseCase>();
     builder.Services.AddScoped<GerarTokenUseCase>();
 
     // Autenticação JWT (RNF09)

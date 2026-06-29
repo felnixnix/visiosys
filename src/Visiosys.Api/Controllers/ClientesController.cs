@@ -1,0 +1,43 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Visiosys.Application.Clientes;
+
+namespace Visiosys.Api.Controllers;
+
+[Authorize]
+[ApiController]
+[Route("api/clientes")]
+public class ClientesController(
+    CriarClienteUseCase criarUseCase,
+    ObterClientePorIdUseCase obterUseCase) : ControllerBase
+{
+    [HttpPost]
+    [ProducesResponseType(typeof(ClienteDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> Criar([FromBody] CriarClienteCommand command, CancellationToken ct)
+    {
+        try
+        {
+            var dto = await criarUseCase.ExecutarAsync(command, ct);
+            return CreatedAtAction(nameof(ObterPorId), new { id = dto.Id }, dto);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { erro = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { erro = ex.Message });
+        }
+    }
+
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType(typeof(ClienteDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ObterPorId(Guid id, CancellationToken ct)
+    {
+        var dto = await obterUseCase.ExecutarAsync(id, ct);
+        return dto is null ? NotFound() : Ok(dto);
+    }
+}
