@@ -12,6 +12,7 @@ public class Precatorio
     public EsferaPrecatorio Esfera { get; private set; }
     public NaturezaPrecatorio Natureza { get; private set; }
     public StatusPrecatorio Status { get; private set; }
+    public Guid? ClienteId { get; private set; }
     public DateTime CriadoEm { get; private set; }
     public DateTime AtualizadoEm { get; private set; }
 
@@ -22,7 +23,8 @@ public class Precatorio
         string tribunalOrigem,
         decimal valorFace,
         EsferaPrecatorio esfera,
-        NaturezaPrecatorio natureza)
+        NaturezaPrecatorio natureza,
+        Guid? clienteId = null)
     {
         if (string.IsNullOrWhiteSpace(numero))
             throw new ArgumentException("O número do precatório é obrigatório.", nameof(numero));
@@ -42,9 +44,16 @@ public class Precatorio
             Esfera = esfera,
             Natureza = natureza,
             Status = StatusPrecatorio.EmAnalise,
+            ClienteId = clienteId,
             CriadoEm = DateTime.UtcNow,
             AtualizadoEm = DateTime.UtcNow
         };
+    }
+
+    public void AssociarCliente(Guid clienteId)
+    {
+        ClienteId = clienteId;
+        AtualizadoEm = DateTime.UtcNow;
     }
 
     public void AtualizarValorAtualizado(decimal novoValor)

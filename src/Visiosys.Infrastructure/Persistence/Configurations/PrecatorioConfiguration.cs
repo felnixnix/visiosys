@@ -49,6 +49,9 @@ public class PrecatorioConfiguration : IEntityTypeConfiguration<Precatorio>
             .HasColumnName("status")
             .IsRequired();
 
+        builder.Property(p => p.ClienteId)
+            .HasColumnName("cliente_id");
+
         builder.Property(p => p.CriadoEm)
             .HasColumnName("criado_em")
             .IsRequired();

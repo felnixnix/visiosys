@@ -17,6 +17,7 @@ export interface PrecatorioDto {
   esfera: EsferaPrecatorio;
   natureza: NaturezaPrecatorio;
   status: StatusPrecatorio;
+  clienteId: string | null;
   criadoEm: string;
 }
 

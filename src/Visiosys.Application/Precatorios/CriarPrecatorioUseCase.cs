@@ -9,7 +9,7 @@ public class CriarPrecatorioUseCase(IPrecatorioRepository repository)
         if (await repository.ExisteNumeroAsync(command.Numero, ct))
             throw new InvalidOperationException($"Já existe um precatório com o número '{command.Numero}'.");
 
-        var precatorio = Precatorio.Criar(command.Numero, command.TribunalOrigem, command.ValorFace, command.Esfera, command.Natureza);
+        var precatorio = Precatorio.Criar(command.Numero, command.TribunalOrigem, command.ValorFace, command.Esfera, command.Natureza, command.ClienteId);
 
         await repository.AdicionarAsync(precatorio, ct);
         await repository.SalvarAsync(ct);

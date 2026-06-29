@@ -4,6 +4,7 @@ import { precatoriosApi } from '../api/precatorios';
 import { andamentosApi } from '../api/andamentos';
 import { pagamentosApi } from '../api/pagamentos';
 import { documentosApi } from '../api/documentos';
+import { clientesApi } from '../api/clientes';
 import type {
   PrecatorioDto,
   AndamentoDto,
@@ -11,6 +12,7 @@ import type {
   DocumentoDto,
   TipoAndamento,
   TipoDocumento,
+  ClienteDto,
 } from '../types';
 
 const STATUS_LABELS: Record<string, string> = {
@@ -68,6 +70,7 @@ type Aba = 'info' | 'andamentos' | 'pagamentos' | 'documentos';
 export function PrecatorioDetalhePage() {
   const { id } = useParams<{ id: string }>();
   const [precatorio, setPrecatorio] = useState<PrecatorioDto | null>(null);
+  const [cliente, setCliente] = useState<ClienteDto | null>(null);
   const [andamentos, setAndamentos] = useState<AndamentoDto[]>([]);
   const [pagamentos, setPagamentos] = useState<PagamentoDto[]>([]);
   const [documentos, setDocumentos] = useState<DocumentoDto[]>([]);
@@ -103,6 +106,9 @@ export function PrecatorioDetalhePage() {
         setAndamentos(a);
         setPagamentos(pg);
         setDocumentos(d);
+        if (p.clienteId) {
+          clientesApi.obterPorId(p.clienteId).then(setCliente).catch(() => null);
+        }
       })
       .catch(() => setErro('Erro ao carregar precatório.'))
       .finally(() => setCarregando(false));
@@ -205,6 +211,14 @@ export function PrecatorioDetalhePage() {
             <dt>Valor de Face</dt><dd>{fmt(precatorio.valorFace)}</dd>
             <dt>Valor Atualizado</dt>
             <dd>{precatorio.valorAtualizado != null ? fmt(precatorio.valorAtualizado) : '—'}</dd>
+            <dt>Cliente</dt>
+            <dd>
+              {cliente
+                ? <Link to={`/clientes/${cliente.id}`}>{cliente.nome}</Link>
+                : precatorio.clienteId
+                  ? <span style={{ color: 'var(--gray-600)', fontSize: '.85rem' }}>Carregando…</span>
+                  : '—'}
+            </dd>
             <dt>Cadastrado em</dt><dd>{fmtData(precatorio.criadoEm)}</dd>
           </dl>
         </div>

@@ -12,11 +12,12 @@ public record PrecatorioDto(
     EsferaPrecatorio Esfera,
     NaturezaPrecatorio Natureza,
     StatusPrecatorio Status,
+    Guid? ClienteId,
     DateTime CriadoEm
 )
 {
     public static PrecatorioDto DeEntidade(Precatorio p) => new(
         p.Id, p.Numero, p.TribunalOrigem, p.ValorFace,
-        p.ValorAtualizado, p.Esfera, p.Natureza, p.Status, p.CriadoEm
+        p.ValorAtualizado, p.Esfera, p.Natureza, p.Status, p.ClienteId, p.CriadoEm
     );
 }

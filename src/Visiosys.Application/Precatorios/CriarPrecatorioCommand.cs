@@ -7,5 +7,6 @@ public record CriarPrecatorioCommand(
     string TribunalOrigem,
     decimal ValorFace,
     EsferaPrecatorio Esfera,
-    NaturezaPrecatorio Natureza
+    NaturezaPrecatorio Natureza,
+    Guid? ClienteId = null
 );

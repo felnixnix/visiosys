@@ -7,6 +7,7 @@ export interface CriarPrecatorioPayload {
   valorFace: number;
   esfera: number;
   natureza: number;
+  clienteId?: string;
 }
 
 export const precatoriosApi = {

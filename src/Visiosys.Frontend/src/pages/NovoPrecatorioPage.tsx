@@ -1,7 +1,15 @@
-import { useState, type FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { precatoriosApi } from '../api/precatorios';
+import { clientesApi } from '../api/clientes';
 import { ApiError } from '../api/client';
+import type { ClienteDto } from '../types';
+
+function fmtDoc(doc: string) {
+  if (doc.length === 11)
+    return doc.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+  return doc.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+}
 
 export function NovoPrecatorioPage() {
   const navigate = useNavigate();
@@ -10,8 +18,16 @@ export function NovoPrecatorioPage() {
   const [valorFace, setValorFace] = useState('');
   const [esfera, setEsfera] = useState('2');
   const [natureza, setNatureza] = useState('1');
+  const [clienteId, setClienteId] = useState('');
+  const [clientes, setClientes] = useState<ClienteDto[]>([]);
   const [erro, setErro] = useState('');
   const [carregando, setCarregando] = useState(false);
+
+  useEffect(() => {
+    clientesApi.listar(1, 100)
+      .then(res => setClientes(res.items))
+      .catch(() => {/* lista vazia — seletor fica opcional */});
+  }, []);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -24,6 +40,7 @@ export function NovoPrecatorioPage() {
         valorFace: parseFloat(valorFace.replace(',', '.')),
         esfera: parseInt(esfera),
         natureza: parseInt(natureza),
+        clienteId: clienteId || undefined,
       });
       navigate('/');
     } catch (err) {
@@ -76,6 +93,24 @@ export function NovoPrecatorioPage() {
             <option value="2">Alimentar</option>
           </select>
         </div>
+        <div className="field">
+          <label htmlFor="cliente">Cliente (cedente)</label>
+          <select id="cliente" value={clienteId} onChange={e => setClienteId(e.target.value)}>
+            <option value="">— Selecione —</option>
+            {clientes.map(c => (
+              <option key={c.id} value={c.id}>
+                {c.nome} — {fmtDoc(c.documento)}
+              </option>
+            ))}
+          </select>
+          {clientes.length === 0 && (
+            <span style={{ fontSize: '.8rem', color: 'var(--gray-600)' }}>
+              Nenhum cliente cadastrado.{' '}
+              <a href="/clientes/novo" style={{ color: 'var(--primary)' }}>Cadastrar agora</a>
+            </span>
+          )}
+        </div>
+
         {erro && <p className="erro">{erro}</p>}
         <div className="actions">
           <button type="button" className="btn-secondary" onClick={() => navigate('/')}>
