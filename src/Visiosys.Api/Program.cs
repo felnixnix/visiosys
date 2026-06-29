@@ -9,11 +9,13 @@ using Serilog;
 using Visiosys.Application.Andamentos;
 using Visiosys.Application.Auth;
 using Visiosys.Application.Auditoria;
+using Visiosys.Application.Pagamentos;
 using Visiosys.Application.Clientes;
 using Visiosys.Application.Documentos;
 using Visiosys.Application.Precatorios;
 using Visiosys.Domain.Andamentos;
 using Visiosys.Domain.Clientes;
+using Visiosys.Domain.Pagamentos;
 using Visiosys.Domain.Documentos;
 using Visiosys.Domain.Precatorios;
 using Visiosys.Infrastructure.Auditoria;
@@ -74,6 +76,9 @@ try
     builder.Services.AddScoped<IAndamentoRepository, AndamentoRepository>();
     builder.Services.AddScoped<RegistrarAndamentoUseCase>();
     builder.Services.AddScoped<ListarAndamentosUseCase>();
+    builder.Services.AddScoped<IPagamentoRepository, PagamentoRepository>();
+    builder.Services.AddScoped<RegistrarPagamentoUseCase>();
+    builder.Services.AddScoped<ListarPagamentosUseCase>();
     builder.Services.AddSingleton<IAuditLogService, MongoAuditLogService>();
     builder.Services.AddScoped<GerarTokenUseCase>();
 
