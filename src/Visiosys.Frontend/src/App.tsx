@@ -6,6 +6,9 @@ import { LoginPage } from './pages/LoginPage';
 import { PrecatoriosPage } from './pages/PrecatoriosPage';
 import { NovoPrecatorioPage } from './pages/NovoPrecatorioPage';
 import { PrecatorioDetalhePage } from './pages/PrecatorioDetalhePage';
+import { ClientesPage } from './pages/ClientesPage';
+import { NovoClientePage } from './pages/NovoClientePage';
+import { ClienteDetalhePage } from './pages/ClienteDetalhePage';
 
 function ProtectedLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -24,6 +27,9 @@ export default function App() {
           <Route path="/" element={<ProtectedLayout><PrecatoriosPage /></ProtectedLayout>} />
           <Route path="/precatorios/novo" element={<ProtectedLayout><NovoPrecatorioPage /></ProtectedLayout>} />
           <Route path="/precatorios/:id" element={<ProtectedLayout><PrecatorioDetalhePage /></ProtectedLayout>} />
+          <Route path="/clientes" element={<ProtectedLayout><ClientesPage /></ProtectedLayout>} />
+          <Route path="/clientes/novo" element={<ProtectedLayout><NovoClientePage /></ProtectedLayout>} />
+          <Route path="/clientes/:id" element={<ProtectedLayout><ClienteDetalhePage /></ProtectedLayout>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

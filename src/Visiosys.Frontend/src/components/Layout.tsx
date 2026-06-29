@@ -17,6 +17,7 @@ export function Layout({ children }: { children: ReactNode }) {
         <Link to="/" className="logo">Visiosys</Link>
         <nav>
           <Link to="/">Precatórios</Link>
+          <Link to="/clientes">Clientes</Link>
           <button onClick={handleSair} className="btn-link">Sair</button>
         </nav>
       </header>

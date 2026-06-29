@@ -75,6 +75,7 @@ try
     builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
     builder.Services.AddScoped<CriarClienteUseCase>();
     builder.Services.AddScoped<ObterClientePorIdUseCase>();
+    builder.Services.AddScoped<ListarClientesUseCase>();
     builder.Services.AddScoped<IDocumentoRepository, DocumentoRepository>();
     // Em produção, Storage:S3Bucket deve estar configurado via env var.
     // Em dev local, usa stub que gera chave/URL sem subir arquivo.

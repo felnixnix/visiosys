@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Visiosys.Application.Clientes;
+using Visiosys.Application.Precatorios;
 
 namespace Visiosys.Api.Controllers;
 
@@ -9,8 +10,20 @@ namespace Visiosys.Api.Controllers;
 [Route("api/clientes")]
 public class ClientesController(
     CriarClienteUseCase criarUseCase,
-    ObterClientePorIdUseCase obterUseCase) : ControllerBase
+    ObterClientePorIdUseCase obterUseCase,
+    ListarClientesUseCase listarUseCase) : ControllerBase
 {
+    [HttpGet]
+    [ProducesResponseType(typeof(PaginaDto<ClienteDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> Listar(
+        [FromQuery] int pagina = 1,
+        [FromQuery] int tamanho = 20,
+        CancellationToken ct = default)
+    {
+        var resultado = await listarUseCase.ExecutarAsync(pagina, tamanho, ct);
+        return Ok(resultado);
+    }
+
     [HttpPost]
     [ProducesResponseType(typeof(ClienteDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

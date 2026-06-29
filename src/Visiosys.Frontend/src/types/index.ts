@@ -36,6 +36,21 @@ export interface ApiErro {
   erro: string;
 }
 
+export type TipoConta = 'Corrente' | 'Poupanca';
+
+export interface ClienteDto {
+  id: string;
+  nome: string;
+  documento: string;
+  email: string;
+  telefone: string | null;
+  bancoCodigo: string | null;
+  bancoAgencia: string | null;
+  bancoNumeroConta: string | null;
+  bancoTipoConta: TipoConta | null;
+  criadoEm: string;
+}
+
 export type TipoAndamento =
   | 'AtualizacaoStatus'
   | 'DocumentoRecebido'
