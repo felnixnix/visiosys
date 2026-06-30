@@ -17,7 +17,7 @@ services:
       retries: 5
 
   mongo:
-    image: mongo:7
+    image: mongo:8
     container_name: visiosys-mongo
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}

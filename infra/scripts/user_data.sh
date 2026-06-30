@@ -22,16 +22,22 @@ apt-get update -y
 apt-get install -y aspnetcore-runtime-8.0
 
 # -------------------------------------------------------------------
-# 3. MongoDB 7 (Community)
+# 3. MongoDB 8 (Community) - 7.0 nao tem repositorio para Ubuntu 24.04 (noble)
 # -------------------------------------------------------------------
-curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc \
-    | gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor
-echo "deb [ arch=arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] \
-  https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/7.0 multiverse" \
-    | tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc \
+    | gpg --batch --yes -o /usr/share/keyrings/mongodb-server-8.0.gpg --dearmor
+echo "deb [ arch=arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] \
+  https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" \
+    | tee /etc/apt/sources.list.d/mongodb-org-8.0.list
 apt-get update -y
 apt-get install -y mongodb-org
 systemctl enable --now mongod
+
+# Aguarda o mongod aceitar conexões antes de criar o usuário
+for i in $(seq 1 30); do
+    mongosh --eval "db.adminCommand('ping')" >/dev/null 2>&1 && break
+    sleep 1
+done
 
 # Cria usuário admin do MongoDB para a aplicação
 mongosh --eval "
