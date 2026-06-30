@@ -37,7 +37,7 @@ Está implantado e rodando em uma instância AWS real (não é só `localhost`);
 
 | Camada | Tecnologia |
 |---|---|
-| Backend | C# / .NET 8, ASP.NET Core Web API |
+| Backend | C# / .NET 8, ASP.NET Core Web API, Swagger/OpenAPI |
 | Domínio | Domain-Driven Design, modelos ricos, sem entidades anêmicas |
 | Persistência relacional | PostgreSQL + Entity Framework Core (concorrência otimista via `xmin`) |
 | Persistência documental | MongoDB (trilha de auditoria LGPD) |
@@ -45,9 +45,10 @@ Está implantado e rodando em uma instância AWS real (não é só `localhost`);
 | Background jobs | .NET `BackgroundService` + `Microsoft.Extensions.Http.Resilience` (retry, backoff, circuit breaker) |
 | Autenticação | JWT Bearer + Rate Limiting nativo do .NET 8 |
 | Observabilidade | Serilog → Seq (logs estruturados) |
-| Frontend | React 19 + TypeScript + Vite |
+| Frontend | React 19 + TypeScript + Vite + React Router |
+| Ambiente local | Docker + Docker Compose (PostgreSQL, MongoDB e Seq para desenvolvimento) |
 | Testes | xUnit + Testcontainers (PostgreSQL/MongoDB reais em container, não mocks) |
-| Infraestrutura | Terraform (IaC), EC2 ARM Graviton2, RDS PostgreSQL, S3, Route 53 |
+| Infraestrutura | Terraform (IaC), EC2 ARM Graviton2, RDS PostgreSQL, S3, Route 53, nginx (reverse proxy), Let's Encrypt/certbot (TLS) |
 | CI/CD | GitHub Actions: build, testes e deploy via AWS SSM com autenticação OIDC (sem chaves AWS estáticas, sem porta SSH aberta para o CI) |
 
 Decisão deliberada: priorizar recursos **nativos** do ecossistema .NET (rate limiting, resiliência HTTP, health checks) em vez de bibliotecas de terceiros, sempre que o nativo resolve sem perda de robustez.
