@@ -55,3 +55,5 @@ Para garantir que a IA atua como uma extensão das decisões da engenharia, impl
 Esta camada assegura que a força motriz da IA não corrompa a integridade técnica, mantendo o repositório organizado e o ambiente de produção salvaguardado.
 
 Todo o processo de infraestrutura é declarativo, definido via **Terraform** e entregue pelo **GitHub Actions** através de commits atómicos em pt-BR (garantidos sem anotações de auxílio de IA). O deploy roda via **AWS SSM com autenticação OIDC** (ver [ADR-021](../docs/adr/ADR-021-deploy-ssm-oidc.md)) — sem abrir porta SSH para o CI e sem credenciais AWS estáticas — assegurando que o MVP ganhe vida na cloud sem falhas manuais.
+
+Como este é um projeto de estudos aplicados que simula um ambiente real, o repositório versiona também um **seeder de dados mock** (`infra/scripts/seed.py`): popula a plataforma em produção com clientes, precatórios, andamentos e pagamentos realistas (CPF/CNPJ com dígito verificador válido) passando pela API real — e não por INSERT direto no banco — para permitir observar o comportamento real do sistema (regras de domínio, auditoria, status). É idempotente: reexecuções não duplicam dados já existentes.

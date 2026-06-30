@@ -15,3 +15,9 @@ Este documento define as diretrizes estritas de código e comportamento para qua
 ## 3. Infraestrutura
 * **Modo Declarativo:** A infraestrutura deve ser sempre provisionada via Terraform (`.tf`). 
 * **Proibição CLI AWS:** É estritamente proibido gerar ou executar comandos imperativos da AWS CLI (`aws ec2 run-instances`, etc.) para criar recursos de produção.
+
+## 4. Documentação Viva
+* **Atualização obrigatória:** Nenhuma tarefa que altere arquitetura, infraestrutura, regras de negócio ou comportamento observável da API é considerada concluída sem a atualização da documentação correspondente (`.ia/roteiro_desenvolvimento.md`, `.ia/README_ARQUITETURA.md` e/ou um novo ADR em `docs/adr/`). A documentação faz parte da entrega, não um passo opcional posterior.
+* **Critério do que documentar:** Decisões arquiteturais (escolha de tecnologia, padrão de deploy, modelo de dados) exigem um novo ADR. Correções de bugs de domínio/API com efeito observável (ex: contrato de serialização, regras de validação) exigem ao menos uma menção no roteiro. Scripts/ferramentas versionadas (seeders, utilitários de infra) exigem registro no roteiro ou README de arquitetura informando propósito e como executar.
+* **Imutabilidade dos ADRs:** ADRs existentes nunca são reescritos para refletir mudanças; cria-se um novo ADR referenciando o anterior, e apenas a linha `Status:` do ADR superado é anotada (ver `docs/adr/README.md`).
+* **Checkpoint de fim de tarefa:** Antes de considerar qualquer entrega finalizada, o assistente deve verificar explicitamente se a documentação ainda reflete o estado real do sistema e atualizá-la na mesma sessão/commit da mudança, não depois.

@@ -35,10 +35,13 @@ Infraestrutura e produção (provisionada via Terraform, em `sa-east-1`):
 * VPC, EC2 ARM `t4g.medium` (Elastic IP), RDS PostgreSQL gerenciado, buckets S3 (documentos + artefatos de deploy), IAM e Security Groups.
 * Bootstrap da instância (`infra/scripts/user_data.sh`): .NET runtime, MongoDB 8, nginx (reverse proxy), AWS CLI e serviços systemd (`visiosys-api`, `visiosys-worker`).
 * **Deploy automatizado via AWS SSM + OIDC** (ver [ADR-021](../docs/adr/ADR-021-deploy-ssm-oidc.md)) — sem porta SSH aberta para o CI; migrations aplicadas no startup.
-* 20 ADRs documentando as decisões arquiteturais em `docs/adr/`.
+* 21 ADRs documentando as decisões arquiteturais em `docs/adr/`.
+* **Correções pós-deploy validadas em produção:** serialização de enums como string (`JsonStringEnumConverter`, alinhado ao contrato esperado pelo frontend) e normalização de datas para UTC em `RegistrarPagamentoUseCase` (PostgreSQL `timestamptz` exige `DateTimeKind.Utc`).
+* **Seeder de dados mock** (`infra/scripts/seed.py`): popula clientes, precatórios, andamentos e pagamentos via API real (não INSERT direto), com CPF/CNPJ válidos e idempotência — usado para validar o comportamento real da plataforma no ambiente de estudos. Execução: `scp` para a instância + `sudo python3 seed.py` (lê credenciais admin de `/etc/visiosys/production.env`).
 
 Governança:
 * `.gitignore` padrão .NET, segredos fora do repositório e governança de IA em `.ia/`.
+* **Documentação viva** (ver [ai_rules.md](ai_rules.md), seção 4): toda mudança de arquitetura, infraestrutura ou comportamento observável da API atualiza a documentação na mesma entrega.
 
 ---
 
