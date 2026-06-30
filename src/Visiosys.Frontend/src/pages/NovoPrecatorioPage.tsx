@@ -1,5 +1,5 @@
 import { useState, useEffect, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { precatoriosApi } from '../api/precatorios';
 import { clientesApi } from '../api/clientes';
 import { ApiError } from '../api/client';
@@ -106,7 +106,7 @@ export function NovoPrecatorioPage() {
           {clientes.length === 0 && (
             <span style={{ fontSize: '.8rem', color: 'var(--gray-600)' }}>
               Nenhum cliente cadastrado.{' '}
-              <a href="/clientes/novo" style={{ color: 'var(--primary)' }}>Cadastrar agora</a>
+              <Link to="/clientes/novo" style={{ color: 'var(--primary)' }}>Cadastrar agora</Link>
             </span>
           )}
         </div>
