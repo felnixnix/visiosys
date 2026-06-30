@@ -1,4 +1,4 @@
-const BASE_URL = '/api';
+export const BASE_URL = `${import.meta.env.BASE_URL}api`;
 
 export function getToken(): string | null {
   return sessionStorage.getItem('visiosys_token');

@@ -21,7 +21,11 @@ export function LoginPage() {
       entrar();
       navigate('/');
     } catch (err) {
-      setErro(err instanceof ApiError ? 'Credenciais inválidas.' : 'Erro ao conectar à API.');
+      if (err instanceof ApiError) {
+        setErro(err.status === 401 ? 'Credenciais inválidas.' : `Erro ao conectar à API (${err.status}).`);
+      } else {
+        setErro('Erro ao conectar à API.');
+      }
     } finally {
       setCarregando(false);
     }

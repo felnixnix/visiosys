@@ -1,10 +1,10 @@
-import { getToken } from './client';
+import { BASE_URL, getToken } from './client';
 import type { DocumentoDto, TipoDocumento } from '../types';
 import { ApiError } from './client';
 
 export const documentosApi = {
   listarPorPrecatorio: (precatorioId: string) =>
-    fetch(`/api/documentos?precatorioId=${precatorioId}`, {
+    fetch(`${BASE_URL}/documentos?precatorioId=${precatorioId}`, {
       headers: { Authorization: `Bearer ${getToken()}` },
     }).then(async (res) => {
       if (!res.ok) throw new ApiError(res.status, res.statusText);
@@ -21,7 +21,7 @@ export const documentosApi = {
     form.append('tipo', tipo);
     if (precatorioId) form.append('precatorioId', precatorioId);
 
-    const res = await fetch('/api/documentos', {
+    const res = await fetch(`${BASE_URL}/documentos`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${getToken()}` },
       body: form,
