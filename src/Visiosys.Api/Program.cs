@@ -138,6 +138,14 @@ try
 
     var app = builder.Build();
 
+    // Aplica migrations pendentes no startup (deploy single-instance).
+    // Idempotente: migrations ja aplicadas sao ignoradas.
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<VisiosysDbContext>();
+        db.Database.Migrate();
+    }
+
     app.UseSerilogRequestLogging();
 
     if (app.Environment.IsDevelopment())

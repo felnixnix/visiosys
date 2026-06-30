@@ -163,6 +163,8 @@ EOF
 
 ln -sf /etc/nginx/sites-available/visiosys /etc/nginx/sites-enabled/visiosys
 rm -f /etc/nginx/sites-enabled/default
-nginx -t && systemctl enable --now nginx
+# restart (nao apenas enable --now): o nginx ja sobe rodando apos o apt install,
+# entao e preciso recarregar para aplicar o site do visiosys.
+nginx -t && systemctl enable nginx && systemctl restart nginx
 
 echo "Bootstrap concluido. Edite /etc/visiosys/production.env antes de iniciar os servicos."
