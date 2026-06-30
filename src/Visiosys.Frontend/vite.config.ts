@@ -1,8 +1,11 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [react()],
+  // Em produção a API responde sob /visiosys (ver ADR-023); em dev local
+  // (`npm run dev`) o app continua servido na raiz, sem prefixo.
+  base: command === 'build' ? '/visiosys/' : '/',
   server: {
     port: 5173,
     proxy: {
@@ -16,4 +19,4 @@ export default defineConfig({
     outDir: '../Visiosys.Api/wwwroot',
     emptyOutDir: true,
   },
-});
+}));

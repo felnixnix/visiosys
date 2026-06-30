@@ -82,6 +82,9 @@ Auth__Senha=SUBSTITUIR_SENHA_ADMIN
 Storage__S3Bucket=SUBSTITUIR_NOME_BUCKET
 Storage__BaseUrl=https://SUBSTITUIR_NOME_BUCKET.s3.sa-east-1.amazonaws.com
 
+# Path base do domínio público (ver ADR-023). Deixe vazio para servir na raiz.
+PathBase=/visiosys
+
 Worker__TribunalBaseUrl=https://api.tribunal.jus.br
 Worker__IntervalMinutos=30
 
@@ -136,15 +139,15 @@ EOF
 systemctl daemon-reload
 
 # -------------------------------------------------------------------
-# 7. nginx — reverse proxy (HTTPS via certbot após DNS propagado)
+# 7. nginx — reverse proxy
+#    Dois server blocks: um para acesso direto por IP (sem TLS, usado
+#    pelo health check do deploy.yml) e outro para o domínio público
+#    felipedearaujo.dev/visiosys, com HTTPS via certbot (ver ADR-023).
 # -------------------------------------------------------------------
 cat > /etc/nginx/sites-available/visiosys << 'EOF'
 server {
     listen 80;
     server_name _;
-
-    # Redirect para HTTPS quando domínio estiver configurado
-    # location / { return 301 https://$host$request_uri; }
 
     location / {
         proxy_pass         http://localhost:5000;
@@ -161,10 +164,48 @@ server {
 }
 EOF
 
+cat > /etc/nginx/sites-available/visiosys-domain << 'EOF'
+server {
+    listen 80;
+    server_name felipedearaujo.dev www.felipedearaujo.dev;
+
+    location = / {
+        return 302 /visiosys/;
+    }
+
+    location /visiosys/ {
+        proxy_pass         http://localhost:5000;
+        proxy_http_version 1.1;
+        proxy_set_header   Upgrade $http_upgrade;
+        proxy_set_header   Connection keep-alive;
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        client_max_body_size 50m;
+    }
+
+    location / {
+        return 404;
+    }
+}
+EOF
+
 ln -sf /etc/nginx/sites-available/visiosys /etc/nginx/sites-enabled/visiosys
+ln -sf /etc/nginx/sites-available/visiosys-domain /etc/nginx/sites-enabled/visiosys-domain
 rm -f /etc/nginx/sites-enabled/default
 # restart (nao apenas enable --now): o nginx ja sobe rodando apos o apt install,
 # entao e preciso recarregar para aplicar o site do visiosys.
 nginx -t && systemctl enable nginx && systemctl restart nginx
+
+# O Elastic IP é reassociado a uma instância nova automaticamente (ver ec2.tf),
+# entao o DNS de felipedearaujo.dev ja resolve para esta maquina no boot —
+# certbot pode rodar sem espera manual. Se falhar (ex: zona Route 53 ainda
+# nao criada num provisionamento do zero), so loga e segue: o site continua
+# funcionando em HTTP ate o certbot ser rodado manualmente depois.
+certbot --nginx -d felipedearaujo.dev -d www.felipedearaujo.dev --non-interactive --agree-tos \
+    -m felnixnix@gmail.com --redirect \
+    || echo "certbot falhou (DNS pode nao estar propagado ainda) - rodar manualmente depois"
 
 echo "Bootstrap concluido. Edite /etc/visiosys/production.env antes de iniciar os servicos."

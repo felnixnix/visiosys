@@ -142,6 +142,15 @@ try
 
     var app = builder.Build();
 
+    // Path base opcional (ex: "/visiosys" em produção, atrás de um domínio
+    // compartilhado — ver ADR-023). Vazio em desenvolvimento: comportamento
+    // na raiz "/" não muda.
+    var pathBase = app.Configuration["PathBase"];
+    if (!string.IsNullOrEmpty(pathBase))
+    {
+        app.UsePathBase(pathBase);
+    }
+
     // Aplica migrations pendentes no startup (deploy single-instance).
     // Idempotente: migrations ja aplicadas sao ignoradas.
     using (var scope = app.Services.CreateScope())

@@ -32,6 +32,7 @@ Cada ADR documenta: **contexto**, **decisão**, **alternativas consideradas** e 
 | [ADR-020](ADR-020-governanca-ia.md) | Governança de IA com Regras Declarativas | Aceito | RNF18 |
 | [ADR-021](ADR-021-deploy-ssm-oidc.md) | Deploy via AWS SSM com Autenticação OIDC | Aceito | RNF07, RNF11, RNF16 |
 | [ADR-022](ADR-022-swagger-producao-basic-auth.md) | Exposição do Swagger em Produção Protegida por Basic Auth | Aceito | RF07, RNF10 |
+| [ADR-023](ADR-023-dominio-felipedearaujo-dev.md) | Domínio felipedearaujo.dev com Roteamento por Path | Aceito | RNF06, RNF11 |
 
 ---
 

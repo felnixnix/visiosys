@@ -20,7 +20,7 @@ export function AjudaPage() {
         <h3>Documentação técnica da API</h3>
         <p>
           A documentação completa dos endpoints (formato OpenAPI/Swagger) fica em{' '}
-          <a href="/swagger" target="_blank" rel="noopener noreferrer">/swagger</a>.
+          <a href={`${import.meta.env.BASE_URL}swagger`} target="_blank" rel="noopener noreferrer">/swagger</a>.
           O acesso exige login com as mesmas credenciais administrativas do sistema.
         </p>
       </div>
