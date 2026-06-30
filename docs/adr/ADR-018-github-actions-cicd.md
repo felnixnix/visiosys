@@ -1,6 +1,6 @@
 # ADR-018: GitHub Actions para CI/CD
 
-**Status:** Aceito  
+**Status:** Aceito — o mecanismo de deploy (passo "SSH deploy para EC2") foi substituído pelo [ADR-021](ADR-021-deploy-ssm-oidc.md) (deploy via AWS SSM). O restante (CI, build, testes, publicação) permanece vigente.  
 **Data:** 2026-06-29  
 **Requisitos:** RNF07
 

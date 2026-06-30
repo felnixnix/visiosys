@@ -27,9 +27,10 @@ Cada ADR documenta: **contexto**, **decisão**, **alternativas consideradas** e 
 | [ADR-015](ADR-015-ec2-arm-graviton.md) | EC2 ARM Graviton2 t4g.medium para Hospedagem | Aceito | RNF06 |
 | [ADR-016](ADR-016-rds-postgresql-gerenciado.md) | Amazon RDS PostgreSQL como Banco Gerenciado | Aceito | RNF03, RNF14 |
 | [ADR-017](ADR-017-terraform-iac.md) | Terraform para Infraestrutura como Código | Aceito | RNF11 |
-| [ADR-018](ADR-018-github-actions-cicd.md) | GitHub Actions para CI/CD | Aceito | RNF07 |
-| [ADR-019](ADR-019-gestao-segredos.md) | Gestão de Segredos via GitHub Secrets e Variáveis de Ambiente | Aceito | RNF16 |
+| [ADR-018](ADR-018-github-actions-cicd.md) | GitHub Actions para CI/CD | Aceito (deploy substituído por ADR-021) | RNF07 |
+| [ADR-019](ADR-019-gestao-segredos.md) | Gestão de Segredos via GitHub Secrets e Variáveis de Ambiente | Aceito (credenciais de CI revistas por ADR-021) | RNF16 |
 | [ADR-020](ADR-020-governanca-ia.md) | Governança de IA com Regras Declarativas | Aceito | RNF18 |
+| [ADR-021](ADR-021-deploy-ssm-oidc.md) | Deploy via AWS SSM com Autenticação OIDC | Aceito | RNF07, RNF11, RNF16 |
 
 ---
 

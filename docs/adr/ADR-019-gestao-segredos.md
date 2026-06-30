@@ -1,6 +1,6 @@
 # ADR-019: Gestão de Segredos via GitHub Secrets e Variáveis de Ambiente
 
-**Status:** Aceito  
+**Status:** Aceito — a parte de credenciais do CI foi revista pelo [ADR-021](ADR-021-deploy-ssm-oidc.md): o `EC2_SSH_KEY` foi removido e a autenticação CI→AWS passou a usar OIDC (sem chaves estáticas). A gestão de segredos em produção (`/etc/visiosys/production.env` via systemd) permanece vigente.  
 **Data:** 2026-06-29  
 **Requisitos:** RNF16
 

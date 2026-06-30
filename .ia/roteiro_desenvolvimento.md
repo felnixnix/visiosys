@@ -19,11 +19,26 @@ Cada nova funcionalidade entra depois por um caminho já pavimentado e coberto p
 
 ## 2. Estado Atual (Concluído)
 
-* Solução .NET 8 estruturada em camadas (DDD / Clean Architecture).
-* Entidade rica `Precatorio` com regras de negócio (criação, atualização de valor, cálculo de deságio, transição de status).
-* Enums de domínio: `EsferaPrecatorio`, `NaturezaPrecatorio`, `StatusPrecatorio`.
-* Suíte de 11 testes unitários no xUnit (ciclo TDD verde).
-* `.gitignore` padrão .NET e governança de IA em `.ia/`.
+**Todas as fases (0 a 5) do roteiro foram concluídas. A aplicação está provisionada e em execução na AWS.**
+
+Backend e domínio:
+* Solução .NET 8 em camadas (DDD / Clean Architecture): Domain, Application, Infrastructure, API e Worker.
+* Domínio rico: `Precatorio` (criação, atualização de valor, cálculo de deságio, transição de status), `Cliente`, `Documento`, `Andamento`, `Pagamento` — com associação Cliente↔Precatório.
+* Persistência poliglota: PostgreSQL (EF Core, concorrência otimista via `xmin`), MongoDB (auditoria LGPD) e S3 (documentos).
+* Autenticação JWT + rate limiting nativo, Health Checks (`/health`), logging estruturado (Serilog) e Worker de captura com resiliência HTTP.
+* Suíte de testes xUnit (domínio + integração com Testcontainers) verde no CI.
+
+Frontend:
+* SPA em React + Vite + TypeScript consumindo a API, servido pela própria API (`wwwroot`) atrás do nginx.
+
+Infraestrutura e produção (provisionada via Terraform, em `sa-east-1`):
+* VPC, EC2 ARM `t4g.medium` (Elastic IP), RDS PostgreSQL gerenciado, buckets S3 (documentos + artefatos de deploy), IAM e Security Groups.
+* Bootstrap da instância (`infra/scripts/user_data.sh`): .NET runtime, MongoDB 8, nginx (reverse proxy), AWS CLI e serviços systemd (`visiosys-api`, `visiosys-worker`).
+* **Deploy automatizado via AWS SSM + OIDC** (ver [ADR-021](../docs/adr/ADR-021-deploy-ssm-oidc.md)) — sem porta SSH aberta para o CI; migrations aplicadas no startup.
+* 20 ADRs documentando as decisões arquiteturais em `docs/adr/`.
+
+Governança:
+* `.gitignore` padrão .NET, segredos fora do repositório e governança de IA em `.ia/`.
 
 ---
 
@@ -71,7 +86,7 @@ Cada nova funcionalidade entra depois por um caminho já pavimentado e coberto p
 ### Fase 5 — Produção e Infraestrutura como Código
 | Passo | Entrega | Requisitos |
 | :--- | :--- | :--- |
-| 14 | **Terraform** (EC2 ARM `t4g.medium`, S3, Route 53), deploy via GitHub Actions e rotinas de backup/DR. `terraform apply` apenas com aprovação humana explícita. | RNF06, RNF11, RNF14, RNF16 |
+| 14 | **Terraform** (EC2 ARM `t4g.medium`, RDS, S3, Route 53) e **deploy via AWS SSM + OIDC** (ver [ADR-021](../docs/adr/ADR-021-deploy-ssm-oidc.md)). `terraform apply` apenas com aprovação humana explícita. Pendente: HTTPS/certbot (requer domínio) e rotinas de backup/DR. | RNF06, RNF11, RNF14, RNF16 |
 
 ---
 

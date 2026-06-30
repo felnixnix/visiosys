@@ -31,7 +31,7 @@ A filosofia **".NET Native"** ditou escolhas robustas: WebApplicationFactory par
 As decisões arquiteturais focaram-se na mitigação de falhas catastróficas comuns em sistemas transacionais web:
 
 * **Evitar "Lost Updates" (Concorrência Otimista):** Dois operadores nunca podem sobrescrever o trabalho um do outro no mesmo precatório. Implementámos mecanismos de *Optimistic Concurrency* utilizando propriedades de controlo do EF Core. Se houver edição simultânea, a transação é bloqueada para salvaguardar a consistência financeira.
-* **Gestão Rigorosa de Segredos:** Evitando vetores de vulnerabilidade, todas as chaves (AWS, JWT, DBs) residem encriptadas nos GitHub Secrets. O CI/CD injeta-as no ambiente Docker estritamente como variáveis de ambiente voláteis.
+* **Gestão Rigorosa de Segredos:** Evitando vetores de vulnerabilidade, os segredos de produção (senha do RDS, chave JWT, login/senha admin, MongoDB) residem em `/etc/visiosys/production.env` na EC2 (permissão `640`, carregado pelo systemd via `EnvironmentFile` — invisível em `ps`/`journalctl`). A EC2 acessa o S3 via **IAM Role** (instance profile), sem chaves estáticas. O CI autentica na AWS via **OIDC** (credenciais temporárias por execução), eliminando `AWS_ACCESS_KEY_ID` do GitHub. Ver [ADR-019](../docs/adr/ADR-019-gestao-segredos.md) e [ADR-021](../docs/adr/ADR-021-deploy-ssm-oidc.md).
 * **Proteção Nativa (Rate Limiting):** Como a aplicação será exposta publicamente na AWS, implementou-se o middleware nativo de *Rate Limiting* do .NET 8, travando tentativas de login por força bruta e garantindo a saúde do servidor sem custos extras de WAF.
 * **Tolerância a Falhas na Integração:** O Worker Service fará varreduras em portais de transparência e diários da república para atualizar os processos judiciais. Como são fontes instáveis, incorporou-se a `Microsoft.Extensions.Http.Resilience` para gerir *timeouts* e re-tentativas de forma assíncrona, assegurando a estabilidade.
 
@@ -47,11 +47,11 @@ A arquitetura usa uma abordagem poliglota: **PostgreSQL** (consistência finance
 
 Num cenário de desenvolvimento acelerado por ferramentas baseadas em Model Context Protocol (MCP) e agentes de IA, o código e a infraestrutura correm o risco de divergir dos padrões arquiteturais caso não existam fronteiras bem definidas.
 
-Para garantir que a IA atua como uma extensão das decisões da engenharia, implementámos uma **pasta de Governança de IA (`docs/ai/`)**:
-* **`rules.md`:** Define as leis irrevogáveis (TDD mandatório, proibição de modelos anémicos, commits padronizados sem menção a IA).
-* **`agents.md`:** Delimita as "personas" operacionais, garantindo que o agente DevOps só utilize Terraform para a AWS e o agente Backend respeite o ecossistema .NET Native.
-* **`skills.md`:** Limita a capacidade de execução no terminal, exigindo pausas para aprovação humana antes de operações críticas como um `terraform apply`.
+Para garantir que a IA atua como uma extensão das decisões da engenharia, implementámos uma **pasta de Governança de IA (`.ia/`)**:
+* **`ai_rules.md`:** Define as leis irrevogáveis (TDD mandatório, proibição de modelos anémicos, commits padronizados sem menção a IA).
+* **`ai_agents.md`:** Delimita as "personas" operacionais, garantindo que o agente DevOps só utilize Terraform para a AWS e o agente Backend respeite o ecossistema .NET Native.
+* **`ai_skills.md`:** Limita a capacidade de execução no terminal, exigindo pausas para aprovação humana antes de operações críticas como um `terraform apply`.
 
 Esta camada assegura que a força motriz da IA não corrompa a integridade técnica, mantendo o repositório organizado e o ambiente de produção salvaguardado.
 
-Todo o processo de infraestrutura é declarativo, definido via **Terraform** e aplicado no **GitHub Actions** através de commits atómicos em pt-BR (garantidos sem anotações de auxílio de IA), assegurando que o MVP ganhe vida na cloud sem falhas manuais.
+Todo o processo de infraestrutura é declarativo, definido via **Terraform** e entregue pelo **GitHub Actions** através de commits atómicos em pt-BR (garantidos sem anotações de auxílio de IA). O deploy roda via **AWS SSM com autenticação OIDC** (ver [ADR-021](../docs/adr/ADR-021-deploy-ssm-oidc.md)) — sem abrir porta SSH para o CI e sem credenciais AWS estáticas — assegurando que o MVP ganhe vida na cloud sem falhas manuais.
