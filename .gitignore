@@ -28,6 +28,7 @@ infra/terraform/terraform.tfstate
 infra/terraform/terraform.tfstate.backup
 infra/terraform/.terraform.lock.hcl
 infra/terraform/terraform.tfvars
+infra/terraform/tfplan*
 
 ## Docker volumes locais
 docker-data/

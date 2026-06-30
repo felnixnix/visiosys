@@ -16,7 +16,7 @@ output "rds_endpoint" {
 output "rds_connection_string" {
   description = "Connection string (sem senha) para referência."
   value       = "Host=${aws_db_instance.postgres.address};Port=5432;Database=visiosys;Username=${var.rds_username};Password=<SENHA>"
-  sensitive   = false
+  sensitive   = true
 }
 
 output "s3_bucket_name" {

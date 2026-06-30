@@ -1,6 +1,6 @@
 resource "aws_security_group" "ec2" {
   name        = "visiosys-ec2-${var.environment}"
-  description = "Visiosys EC2 — API, Worker, MongoDB, nginx"
+  description = "Visiosys EC2 - API, Worker, MongoDB, nginx"
   vpc_id      = aws_vpc.main.id
 
   ingress {
@@ -12,7 +12,7 @@ resource "aws_security_group" "ec2" {
   }
 
   ingress {
-    description = "HTTP público (redirect para HTTPS via nginx)"
+    description = "HTTP publico (redirect para HTTPS via nginx)"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
@@ -20,7 +20,7 @@ resource "aws_security_group" "ec2" {
   }
 
   ingress {
-    description = "HTTPS público"
+    description = "HTTPS publico"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
@@ -39,7 +39,7 @@ resource "aws_security_group" "ec2" {
 
 resource "aws_security_group" "rds" {
   name        = "visiosys-rds-${var.environment}"
-  description = "Visiosys RDS PostgreSQL — acesso apenas da EC2"
+  description = "Visiosys RDS PostgreSQL - acesso apenas da EC2"
   vpc_id      = aws_vpc.main.id
 
   ingress {
