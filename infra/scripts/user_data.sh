@@ -12,6 +12,12 @@ apt-get upgrade -y
 apt-get install -y curl wget gnupg unzip nginx certbot python3-certbot-nginx \
     apt-transport-https software-properties-common
 
+# AWS CLI v2 (ARM64) — necessario para o deploy via SSM baixar artefatos do S3.
+curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o /tmp/awscliv2.zip
+unzip -q -o /tmp/awscliv2.zip -d /tmp
+/tmp/aws/install --update
+rm -rf /tmp/awscliv2.zip /tmp/aws
+
 # -------------------------------------------------------------------
 # 2. .NET 8 Runtime (ARM64)
 # -------------------------------------------------------------------
@@ -93,7 +99,7 @@ Description=Visiosys API (.NET 8)
 After=network.target
 
 [Service]
-Type=notify
+Type=exec
 User=ubuntu
 WorkingDirectory=/opt/visiosys/api
 ExecStart=/opt/visiosys/api/Visiosys.Api
@@ -113,7 +119,7 @@ Description=Visiosys Worker Service (.NET 8)
 After=network.target mongod.service
 
 [Service]
-Type=notify
+Type=exec
 User=ubuntu
 WorkingDirectory=/opt/visiosys/worker
 ExecStart=/opt/visiosys/worker/Visiosys.Worker
