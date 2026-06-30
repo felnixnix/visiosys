@@ -11,9 +11,15 @@ on:
         type: choice
         options: [all, api, worker]
 
-  # Deploy automático em push para main (após CI verde)
+  # Deploy automático em push para main (após CI verde).
+  # Mudanças apenas de documentação ou do seeder não disparam deploy.
   push:
     branches: ["main"]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - ".ia/**"
+      - "infra/scripts/seed.py"
 
 jobs:
   build-and-test:
