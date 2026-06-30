@@ -37,6 +37,22 @@ jobs:
       - name: Testes de integração
         run: dotnet test tests/Visiosys.Integration.Tests/Visiosys.Integration.Tests.csproj --configuration Release --logger "console;verbosity=minimal"
 
+      # Build do frontend ANTES do publish: o Vite gera o output em
+      # src/Visiosys.Api/wwwroot, que precisa existir antes do dotnet publish
+      # para ser empacotado junto com a API.
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: src/Visiosys.Frontend/package-lock.json
+
+      - name: Build Frontend
+        working-directory: src/Visiosys.Frontend
+        run: |
+          npm ci
+          npm run build
+
       # Build self-contained para linux-arm64 (EC2 Graviton)
       - name: Publicar API (linux-arm64)
         run: |
@@ -57,20 +73,6 @@ jobs:
             -p:PublishSingleFile=true \
             -p:EnableCompressionInSingleFile=true \
             --output publish/worker
-
-      # Build do frontend (inclui o output em wwwroot/ que já vai junto com a API)
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-          cache: "npm"
-          cache-dependency-path: src/Visiosys.Frontend/package-lock.json
-
-      - name: Build Frontend
-        working-directory: src/Visiosys.Frontend
-        run: |
-          npm ci
-          npm run build
 
       - name: Empacotar artefatos
         run: |
