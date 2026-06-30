@@ -28,3 +28,13 @@ output "nameservers" {
   description = "Name servers do Route 53 (copiar para o registrador do domínio)."
   value       = var.domain_name != "" ? aws_route53_zone.main[0].name_servers : []
 }
+
+output "github_deploy_role_arn" {
+  description = "ARN da role assumida pelo GitHub Actions via OIDC (secret AWS_DEPLOY_ROLE_ARN)."
+  value       = aws_iam_role.github_deploy.arn
+}
+
+output "deploy_bucket_name" {
+  description = "Bucket S3 onde o CI publica os artefatos de deploy."
+  value       = aws_s3_bucket.deploy.bucket
+}

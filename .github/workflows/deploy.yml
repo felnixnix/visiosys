@@ -87,10 +87,13 @@ jobs:
           retention-days: 7
 
   deploy:
-    name: Deploy EC2
+    name: Deploy EC2 (via SSM)
     needs: build-and-test
     runs-on: ubuntu-latest
     environment: production
+    permissions:
+      id-token: write # necessário para autenticar na AWS via OIDC
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -100,33 +103,68 @@ jobs:
         with:
           name: publish-artifacts
 
-      - name: Configurar SSH
-        run: |
-          install -m 600 -D /dev/null ~/.ssh/id_rsa
-          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
-          ssh-keyscan -H "${{ secrets.EC2_HOST }}" >> ~/.ssh/known_hosts
+      - name: Autenticar na AWS via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: sa-east-1
 
-      - name: Enviar artefatos para EC2
+      - name: Publicar artefatos no S3
+        id: upload
         run: |
           COMPONENTE="${{ github.event.inputs.componente || 'all' }}"
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          BUCKET="visiosys-deploy-prod-${ACCOUNT_ID}"
+          PREFIX="deploy/${{ github.run_id }}"
+
+          aws s3 cp infra/scripts/deploy.sh     "s3://${BUCKET}/${PREFIX}/deploy.sh"
+          aws s3 cp infra/scripts/ssm_deploy.sh "s3://${BUCKET}/${PREFIX}/ssm_deploy.sh"
 
           if [[ "$COMPONENTE" == "api" || "$COMPONENTE" == "all" ]]; then
-            ssh ubuntu@${{ secrets.EC2_HOST }} "mkdir -p /opt/visiosys/api.new"
-            scp api.tar.gz ubuntu@${{ secrets.EC2_HOST }}:/tmp/api.tar.gz
-            ssh ubuntu@${{ secrets.EC2_HOST }} "tar -xzf /tmp/api.tar.gz -C /opt/visiosys/api.new && chmod +x /opt/visiosys/api.new/Visiosys.Api"
+            aws s3 cp api.tar.gz "s3://${BUCKET}/${PREFIX}/api.tar.gz"
           fi
-
           if [[ "$COMPONENTE" == "worker" || "$COMPONENTE" == "all" ]]; then
-            ssh ubuntu@${{ secrets.EC2_HOST }} "mkdir -p /opt/visiosys/worker.new"
-            scp worker.tar.gz ubuntu@${{ secrets.EC2_HOST }}:/tmp/worker.tar.gz
-            ssh ubuntu@${{ secrets.EC2_HOST }} "tar -xzf /tmp/worker.tar.gz -C /opt/visiosys/worker.new && chmod +x /opt/visiosys/worker.new/Visiosys.Worker"
+            aws s3 cp worker.tar.gz "s3://${BUCKET}/${PREFIX}/worker.tar.gz"
           fi
 
-      - name: Executar deploy remoto
+          echo "bucket=${BUCKET}" >> "$GITHUB_OUTPUT"
+          echo "prefix=${PREFIX}" >> "$GITHUB_OUTPUT"
+          echo "componente=${COMPONENTE}" >> "$GITHUB_OUTPUT"
+
+      - name: Acionar deploy na instância via SSM
         run: |
-          COMPONENTE="${{ github.event.inputs.componente || 'all' }}"
-          scp infra/scripts/deploy.sh ubuntu@${{ secrets.EC2_HOST }}:/tmp/deploy.sh
-          ssh ubuntu@${{ secrets.EC2_HOST }} "chmod +x /tmp/deploy.sh && /tmp/deploy.sh ${COMPONENTE}"
+          BUCKET="${{ steps.upload.outputs.bucket }}"
+          PREFIX="${{ steps.upload.outputs.prefix }}"
+          COMPONENTE="${{ steps.upload.outputs.componente }}"
+
+          INSTANCE_ID=$(aws ec2 describe-instances \
+            --filters "Name=tag:Name,Values=visiosys-app-prod" "Name=instance-state-name,Values=running" \
+            --query "Reservations[0].Instances[0].InstanceId" --output text)
+
+          if [[ -z "$INSTANCE_ID" || "$INSTANCE_ID" == "None" ]]; then
+            echo "Instância EC2 visiosys-app-prod não encontrada."
+            exit 1
+          fi
+          echo "Instância alvo: $INSTANCE_ID"
+
+          CMD_ID=$(aws ssm send-command \
+            --instance-ids "$INSTANCE_ID" \
+            --document-name "AWS-RunShellScript" \
+            --comment "Deploy Visiosys ${COMPONENTE} (run ${{ github.run_id }})" \
+            --parameters commands="aws s3 cp s3://${BUCKET}/${PREFIX}/ssm_deploy.sh /tmp/ssm_deploy.sh && chmod +x /tmp/ssm_deploy.sh && /tmp/ssm_deploy.sh ${BUCKET} ${PREFIX} ${COMPONENTE}" \
+            --query "Command.CommandId" --output text)
+          echo "Comando SSM: $CMD_ID"
+
+          sleep 5
+          aws ssm wait command-executed --command-id "$CMD_ID" --instance-id "$INSTANCE_ID" || true
+
+          STATUS=$(aws ssm get-command-invocation --command-id "$CMD_ID" --instance-id "$INSTANCE_ID" --query Status --output text)
+          echo "----- STDOUT -----"
+          aws ssm get-command-invocation --command-id "$CMD_ID" --instance-id "$INSTANCE_ID" --query StandardOutputContent --output text
+          echo "----- STDERR -----"
+          aws ssm get-command-invocation --command-id "$CMD_ID" --instance-id "$INSTANCE_ID" --query StandardErrorContent --output text
+          echo "Status final do deploy: $STATUS"
+          [[ "$STATUS" == "Success" ]] || exit 1
 
       - name: Health check
         run: |

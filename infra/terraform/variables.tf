@@ -50,3 +50,9 @@ variable "domain_name" {
   type        = string
   default     = ""
 }
+
+variable "github_repo" {
+  description = "Repositório GitHub no formato 'owner/repo' autorizado a fazer deploy via OIDC."
+  type        = string
+  default     = "felnixnix/visiosys"
+}

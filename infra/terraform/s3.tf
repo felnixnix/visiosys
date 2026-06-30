@@ -79,3 +79,10 @@ resource "aws_iam_instance_profile" "ec2_app" {
   name = "visiosys-ec2-app-${var.environment}"
   role = aws_iam_role.ec2_app.name
 }
+
+# Permite que o agente SSM registre a instância e receba comandos remotos
+# (deploy via Systems Manager, sem necessidade de SSH de entrada).
+resource "aws_iam_role_policy_attachment" "ec2_ssm" {
+  role       = aws_iam_role.ec2_app.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
