@@ -151,6 +151,12 @@ try
         app.UsePathBase(pathBase);
     }
 
+    // UseRouting explícito: sem ele, o ASP.NET Core insere o roteamento
+    // implícito ANTES do UsePathBase, então o endpoint é resolvido com o
+    // path original (com o prefixo ainda presente) e nunca casa com as
+    // rotas mapeadas abaixo. Precisa vir logo após o UsePathBase.
+    app.UseRouting();
+
     // Aplica migrations pendentes no startup (deploy single-instance).
     // Idempotente: migrations ja aplicadas sao ignoradas.
     using (var scope = app.Services.CreateScope())
