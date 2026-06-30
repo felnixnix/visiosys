@@ -24,12 +24,18 @@ public class RegistrarPagamentoUseCase(
 
         var valorBase = precatorio.ValorAtualizado ?? precatorio.ValorFace;
 
+        // Datas vindas da API (ex: "2024-01-15") chegam com Kind=Unspecified;
+        // o PostgreSQL (timestamptz) exige UTC. Normaliza antes de persistir.
+        var pagoEmUtc = command.PagoEm.HasValue
+            ? DateTime.SpecifyKind(command.PagoEm.Value, DateTimeKind.Utc)
+            : (DateTime?)null;
+
         var pagamento = Pagamento.Registrar(
             command.PrecatorioId,
             command.ValorPago,
             valorBase,
             command.RegistradoPorLogin,
-            command.PagoEm);
+            pagoEmUtc);
 
         precatorio.AvancarStatus(StatusPrecatorio.Liquidado);
 
