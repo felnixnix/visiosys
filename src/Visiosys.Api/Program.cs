@@ -152,11 +152,35 @@ try
 
     app.UseSerilogRequestLogging();
 
-    if (app.Environment.IsDevelopment())
+    // Swagger fica disponível em todos os ambientes (RNF10), mas em produção
+    // exige Basic Auth com as mesmas credenciais administrativas do login
+    // (ver ADR-022) — evita expor o contrato da API publicamente sem proteção.
+    app.Use(async (ctx, next) =>
     {
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
+        if (app.Environment.IsDevelopment() || !ctx.Request.Path.StartsWithSegments("/swagger"))
+        {
+            await next();
+            return;
+        }
+
+        var header = ctx.Request.Headers.Authorization.ToString();
+        if (header.StartsWith("Basic ", StringComparison.OrdinalIgnoreCase))
+        {
+            var credenciais = Encoding.UTF8.GetString(Convert.FromBase64String(header["Basic ".Length..])).Split(':', 2);
+            if (credenciais.Length == 2
+                && credenciais[0] == app.Configuration["Auth:Login"]
+                && credenciais[1] == app.Configuration["Auth:Senha"])
+            {
+                await next();
+                return;
+            }
+        }
+
+        ctx.Response.Headers.WWWAuthenticate = "Basic realm=\"Visiosys Swagger\"";
+        ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+    });
+    app.UseSwagger();
+    app.UseSwaggerUI();
 
     app.UseHttpsRedirection();
     app.UseDefaultFiles();

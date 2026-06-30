@@ -18,6 +18,7 @@ export function Layout({ children }: { children: ReactNode }) {
         <nav>
           <Link to="/">Precatórios</Link>
           <Link to="/clientes">Clientes</Link>
+          <Link to="/ajuda">Ajuda</Link>
           <button onClick={handleSair} className="btn-link">Sair</button>
         </nav>
       </header>

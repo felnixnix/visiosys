@@ -31,6 +31,7 @@ Cada ADR documenta: **contexto**, **decisão**, **alternativas consideradas** e 
 | [ADR-019](ADR-019-gestao-segredos.md) | Gestão de Segredos via GitHub Secrets e Variáveis de Ambiente | Aceito (credenciais de CI revistas por ADR-021) | RNF16 |
 | [ADR-020](ADR-020-governanca-ia.md) | Governança de IA com Regras Declarativas | Aceito | RNF18 |
 | [ADR-021](ADR-021-deploy-ssm-oidc.md) | Deploy via AWS SSM com Autenticação OIDC | Aceito | RNF07, RNF11, RNF16 |
+| [ADR-022](ADR-022-swagger-producao-basic-auth.md) | Exposição do Swagger em Produção Protegida por Basic Auth | Aceito | RF07, RNF10 |
 
 ---
 
