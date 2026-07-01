@@ -10,6 +10,7 @@ import { ClientesPage } from './pages/ClientesPage';
 import { NovoClientePage } from './pages/NovoClientePage';
 import { ClienteDetalhePage } from './pages/ClienteDetalhePage';
 import { AjudaPage } from './pages/AjudaPage';
+import { LogsPage } from './pages/LogsPage';
 
 function ProtectedLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -31,6 +32,7 @@ export default function App() {
           <Route path="/clientes" element={<ProtectedLayout><ClientesPage /></ProtectedLayout>} />
           <Route path="/clientes/novo" element={<ProtectedLayout><NovoClientePage /></ProtectedLayout>} />
           <Route path="/clientes/:id" element={<ProtectedLayout><ClienteDetalhePage /></ProtectedLayout>} />
+          <Route path="/logs" element={<ProtectedLayout><LogsPage /></ProtectedLayout>} />
           <Route path="/ajuda" element={<ProtectedLayout><AjudaPage /></ProtectedLayout>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

@@ -100,3 +100,28 @@ export interface DocumentoDto {
   clienteId: string | null;
   criadoEm: string;
 }
+
+export type NivelLog = 'Verbose' | 'Debug' | 'Information' | 'Warning' | 'Error' | 'Fatal';
+
+export interface LogEntryDto {
+  timestamp: string;
+  level: NivelLog;
+  mensagem: string;
+  metodo: string | null;
+  caminho: string | null;
+  statusCode: number | null;
+  elapsedMs: number | null;
+  excecao: string | null;
+}
+
+export interface ContaPorHoraDto { hora: number; total: number; }
+export interface ContaPorNivelDto { nivel: string; total: number; }
+
+export interface LogStatsDto {
+  totalRequests24h: number;
+  erros24h: number;
+  avisos24h: number;
+  mediaElapsedMs: number;
+  porHora: ContaPorHoraDto[];
+  porNivel: ContaPorNivelDto[];
+}

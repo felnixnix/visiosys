@@ -23,6 +23,7 @@ using Visiosys.Domain.Precatorios.Queries;
 using Visiosys.Domain.Documentos;
 using Visiosys.Domain.Precatorios;
 using Visiosys.Infrastructure.Auditoria;
+using Visiosys.Infrastructure.Logs;
 using Visiosys.Infrastructure.Persistence;
 using Visiosys.Infrastructure.Persistence.Repositories;
 using Visiosys.Infrastructure.Storage;
@@ -35,10 +36,17 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    builder.Host.UseSerilog((ctx, services, config) => config
-        .ReadFrom.Configuration(ctx.Configuration)
-        .ReadFrom.Services(services)
-        .Enrich.FromLogContext());
+    builder.Host.UseSerilog((ctx, services, config) =>
+    {
+        config
+            .ReadFrom.Configuration(ctx.Configuration)
+            .ReadFrom.Services(services)
+            .Enrich.FromLogContext();
+
+        var mongo = ctx.Configuration.GetConnectionString("Mongo");
+        if (!string.IsNullOrEmpty(mongo))
+            config.WriteTo.MongoDB(mongo, collectionName: "logs", cappedMaxSizeMb: 50);
+    });
 
     builder.Services.AddControllers()
         .AddJsonOptions(o =>
@@ -107,6 +115,7 @@ try
     builder.Services.AddScoped<RegistrarPagamentoUseCase>();
     builder.Services.AddScoped<ListarPagamentosUseCase>();
     builder.Services.AddSingleton<IAuditLogService, MongoAuditLogService>();
+    builder.Services.AddSingleton<LogRepository>();
     builder.Services.AddScoped<GerarTokenUseCase>();
 
     // Autenticação JWT (RNF09)
