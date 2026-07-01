@@ -44,6 +44,10 @@ Thumbs.db
 ## Dados pessoais (CV, perfil, referências)
 .felipe/
 
+## act — CI local
+.secrets
+.act/
+
 ## Frontend
 src/Visiosys.Frontend/node_modules/
 src/Visiosys.Frontend/dist/

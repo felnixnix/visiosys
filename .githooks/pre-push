@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+#
+# pre-push: executa CI local via act antes de cada push.
+# Para pular: git push --no-verify
+#
+
+set -euo pipefail
+
+WORKFLOW=".github/workflows/ci.yml"
+JOB="build-and-test"
+
+log() { echo "[pre-push] $*"; }
+
+# Localiza act (PATH ou instalação padrão do winget no Windows)
+find_act() {
+  command -v act 2>/dev/null && return
+  local winget_base="$LOCALAPPDATA/Microsoft/WinGet/Packages"
+  if [[ -d "$winget_base" ]]; then
+    find "$winget_base" -name "act.exe" 2>/dev/null | head -1
+  fi
+}
+
+ACT=$(find_act)
+
+if [[ -z "$ACT" ]]; then
+  log "act nao encontrado. Instale com: winget install nektos.act"
+  log "Push prosseguindo sem validacao local."
+  exit 0
+fi
+
+if ! docker info > /dev/null 2>&1; then
+  log "Docker nao esta rodando. Inicie o Docker Desktop."
+  log "Push prosseguindo sem validacao local."
+  exit 0
+fi
+
+log "Iniciando CI local (act v$("$ACT" --version | awk '{print $3}'))..."
+log "Imagem: catthehacker/ubuntu:act-latest (download ~1.5GB na primeira execucao)"
+log ""
+
+if "$ACT" -j "$JOB" --workflows "$WORKFLOW"; then
+  log ""
+  log "CI local passou. Prosseguindo com o push."
+  exit 0
+else
+  log ""
+  log "CI local falhou. Corrija os erros antes de fazer push."
+  log "Para pular esta validacao: git push --no-verify"
+  exit 1
+fi

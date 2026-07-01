@@ -115,6 +115,21 @@ dotnet test
 ```
 Os testes de integração sobem PostgreSQL e MongoDB reais via Testcontainers (não usam mocks de banco), então é necessário ter o Docker rodando.
 
+### Validação local antes do push (act)
+
+O repositório inclui um hook `pre-push` que executa o mesmo workflow de CI do GitHub Actions localmente via [act](https://github.com/nektos/act), antes de cada `git push`.
+
+**Pré-requisitos:** Docker Desktop rodando + act instalado.
+
+**Configuração inicial (uma vez após clonar):**
+```bash
+bash scripts/setup-dev.sh
+```
+
+Isso configura o `core.hooksPath` do git para `.githooks/` e verifica os pré-requisitos. Na primeira execução do hook, a imagem Docker `catthehacker/ubuntu:act-latest` (~1.5 GB) será baixada automaticamente.
+
+Para pular a validação em um push específico: `git push --no-verify`
+
 ---
 
 ## Ambiente em produção
