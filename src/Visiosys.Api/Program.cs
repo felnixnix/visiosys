@@ -139,8 +139,7 @@ try
 
     // Health Checks (RNF13)
     builder.Services.AddHealthChecks()
-        .AddNpgSql(builder.Configuration.GetConnectionString("Postgres")!, name: "postgres")
-        .AddMongoDb(builder.Configuration.GetConnectionString("Mongo")!, name: "mongodb");
+        .AddNpgSql(builder.Configuration.GetConnectionString("Postgres")!, name: "postgres");
 
     var app = builder.Build();
 
