@@ -36,17 +36,10 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    builder.Host.UseSerilog((ctx, services, config) =>
-    {
-        config
-            .ReadFrom.Configuration(ctx.Configuration)
-            .ReadFrom.Services(services)
-            .Enrich.FromLogContext();
-
-        var mongo = ctx.Configuration.GetConnectionString("Mongo");
-        if (!string.IsNullOrEmpty(mongo))
-            config.WriteTo.MongoDB(mongo, collectionName: "logs");
-    });
+    builder.Host.UseSerilog((ctx, services, config) => config
+        .ReadFrom.Configuration(ctx.Configuration)
+        .ReadFrom.Services(services)
+        .Enrich.FromLogContext());
 
     builder.Services.AddControllers()
         .AddJsonOptions(o =>
