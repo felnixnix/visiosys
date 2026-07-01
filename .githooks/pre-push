@@ -1,53 +1,35 @@
 #!/usr/bin/env bash
 #
-# pre-push: executa CI local via act antes de cada push.
-# Para pular: git push --no-verify
+# pre-push: validacao local rapida antes de cada push (~30s).
+# Executa build Release + testes unitarios de dominio.
+# Para simulacao completa do CI (act): bash scripts/validate-ci.sh
+# Para pular este hook: git push --no-verify
 #
 
 set -euo pipefail
 
-WORKFLOW=".github/workflows/ci.yml"
-JOB="build-and-test"
+log()  { echo "[pre-push] $*"; }
+fail() { echo "[pre-push] FALHOU: $*"; exit 1; }
 
-log() { echo "[pre-push] $*"; }
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
 
-# Localiza act (PATH ou instalacao padrao do winget no Windows)
-find_act() {
-  command -v act 2>/dev/null && return
-  local winget_base="$LOCALAPPDATA/Microsoft/WinGet/Packages"
-  if [[ -d "$winget_base" ]]; then
-    find "$winget_base" -name "act.exe" 2>/dev/null | head -1
-  fi
-}
-
-ACT=$(find_act)
-
-if [[ -z "$ACT" ]]; then
-  log "act nao encontrado. Instale com: winget install nektos.act"
-  log "Push prosseguindo sem validacao local."
-  exit 0
+# Build completo em Release — pega erros de compilacao C# e frontend
+log "Build Release..."
+if ! dotnet build --configuration Release --nologo -v quiet 2>&1; then
+  fail "dotnet build falhou. Corrija os erros antes de fazer push."
 fi
+log "Build OK."
 
-if ! docker info > /dev/null 2>&1; then
-  log "Docker nao esta rodando. Inicie o Docker Desktop."
-  log "Push prosseguindo sem validacao local."
-  exit 0
+# Testes de dominio (sem Docker, rapido)
+log "Testes unitarios de dominio..."
+if ! dotnet test tests/Visiosys.Domain.Tests/Visiosys.Domain.Tests.csproj \
+    --configuration Release --no-build --nologo \
+    --logger "console;verbosity=minimal" 2>&1; then
+  fail "Testes de dominio falharam."
 fi
+log "Testes OK."
 
-# Remove containers testcontainers estagnados de runs anteriores interrompidos
-docker ps -aq --filter "name=testcontainers-" | xargs -r docker rm -f > /dev/null 2>&1 || true
-
-log "Iniciando CI local (act $("$ACT" --version | awk '{print $3}'))..."
-log "Imagem: catthehacker/ubuntu:act-latest"
 log ""
-
-if "$ACT" -j "$JOB" --workflows "$WORKFLOW"; then
-  log ""
-  log "CI local passou. Prosseguindo com o push."
-  exit 0
-else
-  log ""
-  log "CI local falhou. Corrija os erros antes de fazer push."
-  log "Para pular esta validacao: git push --no-verify"
-  exit 1
-fi
+log "Validacao local passou. Prosseguindo com o push."
+log "(Para CI completo com Testcontainers: bash scripts/validate-ci.sh)"

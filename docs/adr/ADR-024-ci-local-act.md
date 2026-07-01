@@ -13,39 +13,47 @@ por iteração, além de poluir o histórico de commits com fixes sucessivos.
 
 ## Decisão
 
-Adotar **act** (nektos/act v0.2.89) para executar o mesmo workflow `ci.yml` localmente
-antes de cada push, usando um hook `pre-push` versionado no repositório.
+Adotar uma estratégia em **duas camadas**:
 
-O act roda o workflow em um container Docker (`catthehacker/ubuntu:act-latest`), que
-reproduz o ambiente GitHub Actions ubuntu-latest com suporte a Docker-in-Docker,
-permitindo que os testes de integração com Testcontainers funcionem corretamente.
+1. **Hook `pre-push` (rápido, ~30s):** executa `dotnet build --configuration Release` +
+   `dotnet test` nos testes de domínio (unit), sem Docker. Bloqueia pushes com erro de
+   compilação C# ou falha nos testes unitários — os erros mais comuns no dia a dia.
+
+2. **`scripts/validate-ci.sh` (completo, ~3-5 min):** simula o workflow `ci.yml` completo
+   via **act** (nektos/act v0.2.89), incluindo build, testes de integração com
+   Testcontainers e qualquer etapa do GitHub Actions. Requer Docker. Executado
+   manualmente antes de pushes com mudanças significativas na infraestrutura ou testes
+   de integração.
+
+A tentativa de rodar act no hook `pre-push` foi descartada após verificar que o
+tempo de execução (5-15 minutos por push, mesmo com imagem em cache) é incompatível
+com o uso no dia a dia.
 
 ## Estrutura adotada
 
 ```
-.actrc                  # plataforma e opções do act
+.actrc                   # plataforma e opções do act
 .githooks/
-  pre-push              # hook: executa act -j build-and-test antes do push
+  pre-push               # hook rápido: dotnet build + testes unitários (~30s)
 scripts/
-  setup-dev.sh          # configura core.hooksPath e verifica pré-requisitos
+  setup-dev.sh           # configura core.hooksPath e verifica pré-requisitos
+  validate-ci.sh         # simulação completa com act (execução manual)
 ```
 
-O hook é **não bloqueante por omissão de pré-requisitos**: se `act` ou Docker não estiverem
-disponíveis, o push prossegue com um aviso. O desenvolvedor pode também pular
-explicitamente com `git push --no-verify`.
+O hook pode ser pulado com `git push --no-verify` quando necessário.
 
 ## Alternativas descartadas
 
 | Alternativa | Razão |
 |---|---|
-| Hooks locais executando `dotnet build` diretamente | Não reproduz o ambiente exato do CI (versão do .NET, variáveis, imagens) |
-| Rodar só os testes de domínio (unit) | Não pega erros de compilação do frontend nem falhas de integração |
+| act no hook `pre-push` | 5-15 min por push; inviável no dia a dia |
+| Apenas `dotnet build` sem testes | Não pega regressões em regras de domínio |
 | Confiar apenas no CI do GitHub | Ciclo de feedback lento (2-5 min por iteração) e histórico poluído |
 
 ## Consequências
 
-- **Primeira execução:** download da imagem `catthehacker/ubuntu:act-latest` (~1.5 GB), único.
-- **Execuções seguintes:** ~2-3 minutos (build + testes), usando imagem em cache local.
+- Todo `git push` roda build + testes unitários em ~30s (sem Docker).
+- Simulação completa disponível sob demanda via `bash scripts/validate-ci.sh`.
 - `git push --no-verify` mantém a saída de emergência sem remover a proteção padrão.
 - O `.actrc` e `.githooks/` são commitados; a configuração de `core.hooksPath` é local
   e ativada via `bash scripts/setup-dev.sh`.
