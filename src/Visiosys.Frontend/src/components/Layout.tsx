@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Joyride, STATUS, ACTIONS, EVENTS, type EventData, type ButtonType } from 'react-joyride';
 import { useAuth } from '../contexts/AuthContext';
@@ -151,7 +151,11 @@ export function Layout({ children }: { children: ReactNode }) {
           <button onClick={handleSair} className="btn-link">Sair</button>
         </nav>
       </header>
-      <main className="main">{children}</main>
+      <main className="main">
+        <Suspense fallback={<p className="carregando">Carregando…</p>}>
+          {children}
+        </Suspense>
+      </main>
     </div>
   );
 }

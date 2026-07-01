@@ -1,16 +1,21 @@
+import { lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Layout } from './components/Layout';
 import { LoginPage } from './pages/LoginPage';
-import { PrecatoriosPage } from './pages/PrecatoriosPage';
-import { NovoPrecatorioPage } from './pages/NovoPrecatorioPage';
-import { PrecatorioDetalhePage } from './pages/PrecatorioDetalhePage';
-import { ClientesPage } from './pages/ClientesPage';
-import { NovoClientePage } from './pages/NovoClientePage';
-import { ClienteDetalhePage } from './pages/ClienteDetalhePage';
-import { AjudaPage } from './pages/AjudaPage';
-import { LogsPage } from './pages/LogsPage';
+
+// Páginas protegidas carregadas sob demanda (code splitting): cada rota vira um
+// chunk separado, tirando dependências pesadas (ex.: recharts na LogsPage) do
+// bundle inicial. O LoginPage fica eager por ser a porta de entrada.
+const PrecatoriosPage = lazy(() => import('./pages/PrecatoriosPage').then(m => ({ default: m.PrecatoriosPage })));
+const NovoPrecatorioPage = lazy(() => import('./pages/NovoPrecatorioPage').then(m => ({ default: m.NovoPrecatorioPage })));
+const PrecatorioDetalhePage = lazy(() => import('./pages/PrecatorioDetalhePage').then(m => ({ default: m.PrecatorioDetalhePage })));
+const ClientesPage = lazy(() => import('./pages/ClientesPage').then(m => ({ default: m.ClientesPage })));
+const NovoClientePage = lazy(() => import('./pages/NovoClientePage').then(m => ({ default: m.NovoClientePage })));
+const ClienteDetalhePage = lazy(() => import('./pages/ClienteDetalhePage').then(m => ({ default: m.ClienteDetalhePage })));
+const AjudaPage = lazy(() => import('./pages/AjudaPage').then(m => ({ default: m.AjudaPage })));
+const LogsPage = lazy(() => import('./pages/LogsPage').then(m => ({ default: m.LogsPage })));
 
 function ProtectedLayout({ children }: { children: React.ReactNode }) {
   return (
