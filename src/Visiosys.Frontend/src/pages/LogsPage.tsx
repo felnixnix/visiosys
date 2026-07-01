@@ -121,7 +121,7 @@ export function LogsPage() {
                 nameKey="nivel"
                 cx="50%" cy="50%"
                 outerRadius={70}
-                label={({ nivel, percent }) => `${nivel} ${(percent * 100).toFixed(0)}%`}
+                label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
                 labelLine={false}
               >
                 {(stats?.porNivel ?? []).map((entry) => (

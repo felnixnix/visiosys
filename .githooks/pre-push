@@ -30,6 +30,15 @@ if ! dotnet test tests/Visiosys.Domain.Tests/Visiosys.Domain.Tests.csproj \
 fi
 log "Testes OK."
 
+# Verificacao TypeScript do frontend
+if command -v npm > /dev/null 2>&1 && [ -f "src/Visiosys.Frontend/package.json" ]; then
+  log "Verificacao TypeScript do frontend..."
+  if ! (cd src/Visiosys.Frontend && npx tsc --noEmit 2>&1); then
+    fail "Erro de tipagem TypeScript no frontend. Corrija antes de fazer push."
+  fi
+  log "TypeScript OK."
+fi
+
 log ""
 log "Validacao local passou. Prosseguindo com o push."
 log "(Para CI completo com Testcontainers: bash scripts/validate-ci.sh)"
