@@ -50,7 +50,8 @@ Está implantado e rodando em uma instância AWS real (não é só `localhost`);
 | Ambiente local | Docker + Docker Compose (PostgreSQL, MongoDB e Seq para desenvolvimento) |
 | Testes | xUnit + Testcontainers (PostgreSQL/MongoDB reais em container, não mocks) |
 | Infraestrutura | Terraform (IaC), EC2 ARM Graviton2, RDS PostgreSQL, S3, Route 53, nginx (reverse proxy), Let's Encrypt/certbot (TLS) |
-| CI/CD | GitHub Actions: build, testes e deploy via AWS SSM com autenticação OIDC (sem chaves AWS estáticas, sem porta SSH aberta para o CI). Validação local antes do push via hook `pre-push` (build + testes) e simulação completa do pipeline com [act](https://github.com/nektos/act) |
+| Validação pré-push | Hook `pre-push` valida cada push localmente (build Release + testes de domínio, ~30s) antes de chegar ao GitHub; simulação completa do pipeline de CI sob demanda via [act](https://github.com/nektos/act). Ver [ADR-024](docs/adr/ADR-024-ci-local-act.md) |
+| CI/CD | GitHub Actions: build, testes e deploy via AWS SSM com autenticação OIDC (sem chaves AWS estáticas, sem porta SSH aberta para o CI) |
 
 Decisão deliberada: priorizar recursos **nativos** do ecossistema .NET (rate limiting, resiliência HTTP, health checks) em vez de bibliotecas de terceiros, sempre que o nativo resolve sem perda de robustez.
 
