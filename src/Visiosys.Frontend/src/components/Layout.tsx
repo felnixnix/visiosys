@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Joyride, STATUS, type EventData } from 'react-joyride';
+import { Joyride, STATUS, type EventData, type ButtonType } from 'react-joyride';
 import { useAuth } from '../contexts/AuthContext';
 import { passosTour } from '../tour/steps';
 import type { ReactNode } from 'react';
@@ -11,7 +11,7 @@ const opcoesTour = {
   primaryColor: '#1d4ed8',
   zIndex: 1000,
   overlayColor: 'rgba(0,0,0,0.45)',
-  buttons: ['back', 'primary', 'skip'] as const,
+  buttons: ['back', 'primary', 'skip'] as ButtonType[],
 };
 
 const localeTour = {
