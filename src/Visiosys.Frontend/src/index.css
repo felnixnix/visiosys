@@ -80,6 +80,15 @@ body { margin: 0; }
 
 .btn-link { background: none; border: none; cursor: pointer; font-size: .875rem; padding: .25rem; }
 
+.btn-tour {
+  background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3);
+  color: white; border-radius: 50%; width: 24px; height: 24px;
+  cursor: pointer; font-size: .8rem; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0; line-height: 1;
+}
+.btn-tour:hover { background: rgba(255,255,255,.25); }
+
 /* Table */
 .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
 .page-header h2 { margin: 0; }
@@ -124,6 +133,32 @@ body { margin: 0; }
 .info-grid { display: grid; grid-template-columns: 160px 1fr; gap: .5rem 1rem; margin: 0; }
 .info-grid dt { font-weight: 600; font-size: .8rem; color: var(--gray-600); align-self: center; }
 .info-grid dd { margin: 0; font-size: .9rem; }
+
+/* Login: campo senha com toggle */
+.input-senha { position: relative; }
+.input-senha input { padding-right: 2.5rem; }
+.toggle-senha {
+  position: absolute; right: .5rem; top: 50%;
+  transform: translateY(-50%);
+  background: none; border: none; cursor: pointer;
+  padding: .25rem; color: var(--gray-600); line-height: 1;
+}
+.toggle-senha:hover { color: var(--primary); }
+
+/* Login: caixa de acesso demo */
+.demo-hint {
+  display: flex; flex-direction: column; align-items: center; gap: .25rem;
+  margin-top: 1.25rem; padding: .75rem 1rem;
+  background: #eff6ff; border: 1px solid #bfdbfe;
+  border-radius: var(--radius);
+  font-size: .82rem; color: var(--gray-600); text-align: center;
+}
+.demo-hint strong { color: var(--gray-800); font-size: .78rem; text-transform: uppercase; letter-spacing: .5px; }
+.demo-hint code {
+  background: #dbeafe; color: var(--primary);
+  padding: .1rem .35rem; border-radius: 4px;
+  font-family: monospace; font-size: .85rem;
+}
 
 /* Timeline andamentos */
 .timeline { display: flex; flex-direction: column; gap: .75rem; }

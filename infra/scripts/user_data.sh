@@ -78,6 +78,8 @@ Jwt__ExpiraEmMinutos=480
 
 Auth__Login=SUBSTITUIR_LOGIN_ADMIN
 Auth__Senha=SUBSTITUIR_SENHA_ADMIN
+Auth__DemoLogin=user
+Auth__DemoSenha=user
 
 Storage__S3Bucket=SUBSTITUIR_NOME_BUCKET
 Storage__BaseUrl=https://SUBSTITUIR_NOME_BUCKET.s3.sa-east-1.amazonaws.com

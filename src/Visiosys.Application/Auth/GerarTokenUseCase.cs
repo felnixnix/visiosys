@@ -10,7 +10,10 @@ public class GerarTokenUseCase(IConfiguration config)
 {
     public TokenDto Executar(LoginCommand command)
     {
-        if (command.Login != config["Auth:Login"] || command.Senha != config["Auth:Senha"])
+        var adminValido = command.Login == config["Auth:Login"] && command.Senha == config["Auth:Senha"];
+        var demoValido  = command.Login == config["Auth:DemoLogin"] && command.Senha == config["Auth:DemoSenha"];
+
+        if (!adminValido && !demoValido)
             throw new UnauthorizedAccessException("Credenciais inválidas.");
 
         var chave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Chave"]!));
