@@ -181,8 +181,10 @@ try
     app.UseSerilogRequestLogging();
 
     // Swagger fica disponível em todos os ambientes (RNF10), mas em produção
-    // exige Basic Auth com as mesmas credenciais administrativas do login
-    // (ver ADR-022) — evita expor o contrato da API publicamente sem proteção.
+    // exige Basic Auth (ver ADR-022 e ADR-026) — evita expor o contrato da API
+    // a crawlers sem qualquer barreira. Aceita as credenciais de acesso ao
+    // sistema, tanto de administrador quanto do usuário demo, para que quem
+    // explora o portfólio pela conta demo também alcance a documentação.
     app.Use(async (ctx, next) =>
     {
         if (app.Environment.IsDevelopment() || !ctx.Request.Path.StartsWithSegments("/swagger"))
@@ -195,12 +197,19 @@ try
         if (header.StartsWith("Basic ", StringComparison.OrdinalIgnoreCase))
         {
             var credenciais = Encoding.UTF8.GetString(Convert.FromBase64String(header["Basic ".Length..])).Split(':', 2);
-            if (credenciais.Length == 2
-                && credenciais[0] == app.Configuration["Auth:Login"]
-                && credenciais[1] == app.Configuration["Auth:Senha"])
+            if (credenciais.Length == 2)
             {
-                await next();
-                return;
+                var login = credenciais[0];
+                var senha = credenciais[1];
+                var ehAdmin = login == app.Configuration["Auth:Login"]
+                    && senha == app.Configuration["Auth:Senha"];
+                var ehDemo = login == app.Configuration["Auth:DemoLogin"]
+                    && senha == app.Configuration["Auth:DemoSenha"];
+                if (ehAdmin || ehDemo)
+                {
+                    await next();
+                    return;
+                }
             }
         }
 
