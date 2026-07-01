@@ -45,7 +45,7 @@ try
 
         var mongo = ctx.Configuration.GetConnectionString("Mongo");
         if (!string.IsNullOrEmpty(mongo))
-            config.WriteTo.MongoDB(mongo, collectionName: "logs", cappedMaxSizeMb: 50);
+            config.WriteTo.MongoDB(mongo, collectionName: "logs");
     });
 
     builder.Services.AddControllers()
