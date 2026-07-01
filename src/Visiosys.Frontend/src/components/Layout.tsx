@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Joyride, STATUS, type EventData, type ButtonType } from 'react-joyride';
+import { Joyride, STATUS, ACTIONS, EVENTS, type EventData, type ButtonType } from 'react-joyride';
 import { useAuth } from '../contexts/AuthContext';
 import { passosTour } from '../tour/steps';
 import type { ReactNode } from 'react';
@@ -30,6 +30,7 @@ export function Layout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [rodandoTour, setRodandoTour] = useState(false);
+  const [passoTour, setPassoTour] = useState(0);
   const [saude, setSaude] = useState<StatusSaude>('verificando');
 
   useEffect(() => {
@@ -48,19 +49,53 @@ export function Layout({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (location.pathname === '/' && !localStorage.getItem(CHAVE_TOUR)) {
-      const t = setTimeout(() => setRodandoTour(true), 800);
+      const t = setTimeout(() => {
+        setPassoTour(0);
+        setRodandoTour(true);
+      }, 800);
       return () => clearTimeout(t);
     }
   }, [location.pathname]);
 
+  function encerrarTour() {
+    localStorage.setItem(CHAVE_TOUR, '1');
+    setRodandoTour(false);
+    setPassoTour(0);
+  }
+
   function handleTourEvento(data: EventData) {
-    if (data.status === STATUS.FINISHED || data.status === STATUS.SKIPPED) {
-      localStorage.setItem(CHAVE_TOUR, '1');
-      setRodandoTour(false);
+    const { type, action, index, status } = data;
+
+    // Fim do tour: concluído, pulado ou fechado (X / ESC / overlay).
+    if (
+      status === STATUS.FINISHED ||
+      status === STATUS.SKIPPED ||
+      action === ACTIONS.CLOSE ||
+      action === ACTIONS.SKIP
+    ) {
+      encerrarTour();
+      return;
+    }
+
+    // Transição de passo. O tour está em modo controlado, então avançamos o
+    // índice manualmente e, quando o próximo passo pertence a outra rota,
+    // navegamos antes — o Joyride aguarda o alvo aparecer (targetWaitTimeout).
+    if (type === EVENTS.STEP_AFTER) {
+      const proximo = index + (action === ACTIONS.PREV ? -1 : 1);
+      if (proximo < 0 || proximo >= passosTour.length) {
+        encerrarTour();
+        return;
+      }
+      const rota = passosTour[proximo]?.data?.route;
+      if (rota && rota !== location.pathname) {
+        navigate(rota);
+      }
+      setPassoTour(proximo);
     }
   }
 
   function handleIniciarTour() {
+    setPassoTour(0);
     if (location.pathname !== '/') {
       navigate('/');
       setTimeout(() => setRodandoTour(true), 400);
@@ -79,6 +114,7 @@ export function Layout({ children }: { children: ReactNode }) {
       <Joyride
         steps={passosTour}
         run={rodandoTour}
+        stepIndex={passoTour}
         onEvent={handleTourEvento}
         continuous
         scrollToFirstStep
