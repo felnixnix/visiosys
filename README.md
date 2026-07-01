@@ -176,6 +176,7 @@ Uma seleção de problemas reais enfrentados ao levar o projeto da máquina loca
 
 ## Documentação
 
+- [`docs/AUTORIA.md`](docs/AUTORIA.md): como o projeto foi construído, autoria das decisões e uso de IA como copiloto (com autoavaliação técnica).
 - [`docs/adr/`](docs/adr/): Architecture Decision Records (contexto, decisão, alternativas, consequências de cada escolha relevante).
 - [`.ia/roteiro_desenvolvimento.md`](.ia/roteiro_desenvolvimento.md): roteiro de desenvolvimento por fases (walking skeleton até produção).
 - [`.ia/README_ARQUITETURA.md`](.ia/README_ARQUITETURA.md): racional arquitetural e jornada de engenharia.
