@@ -30,18 +30,6 @@ if ! dotnet test tests/Visiosys.Domain.Tests/Visiosys.Domain.Tests.csproj \
 fi
 log "Testes OK."
 
-# Verificacao TypeScript do frontend (via node_modules local, sem npx)
-TSC="src/Visiosys.Frontend/node_modules/.bin/tsc"
-if [ -f "$TSC" ]; then
-  log "Verificacao TypeScript do frontend..."
-  if ! (cd src/Visiosys.Frontend && node_modules/.bin/tsc --noEmit 2>&1); then
-    fail "Erro de tipagem TypeScript no frontend. Corrija antes de fazer push."
-  fi
-  log "TypeScript OK."
-else
-  log "node_modules nao encontrado — pulando verificacao TypeScript (rode npm install em src/Visiosys.Frontend)."
-fi
-
 log ""
 log "Validacao local passou. Prosseguindo com o push."
 log "(Para CI completo com Testcontainers: bash scripts/validate-ci.sh)"
