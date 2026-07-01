@@ -45,7 +45,7 @@ export function PrecatoriosPage() {
     <div>
       <div className="page-header">
         <h2>Precatórios</h2>
-        <Link to="/precatorios/novo" className="btn-primary">+ Novo</Link>
+        <Link to="/precatorios/novo" className="btn-primary" data-tour="btn-novo">+ Novo</Link>
       </div>
 
       {erro && <p className="erro">{erro}</p>}
@@ -56,7 +56,7 @@ export function PrecatoriosPage() {
         <p className="vazio">Nenhum precatório cadastrado.</p>
       ) : (
         <>
-          <table className="tabela">
+          <table className="tabela" data-tour="tabela">
             <thead>
               <tr>
                 <th>Número</th>
@@ -76,7 +76,7 @@ export function PrecatoriosPage() {
                   <td>{formatBRL(p.valorFace)}</td>
                   <td>{p.esfera}</td>
                   <td>
-                    <span className={`badge ${STATUS_CLASS[p.status] ?? ''}`}>
+                    <span className={`badge ${STATUS_CLASS[p.status] ?? ''}`} data-tour="badge-status">
                       {STATUS_LABEL[p.status] ?? p.status}
                     </span>
                   </td>
