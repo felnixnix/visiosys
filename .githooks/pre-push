@@ -30,13 +30,16 @@ if ! dotnet test tests/Visiosys.Domain.Tests/Visiosys.Domain.Tests.csproj \
 fi
 log "Testes OK."
 
-# Verificacao TypeScript do frontend
-if command -v npm > /dev/null 2>&1 && [ -f "src/Visiosys.Frontend/package.json" ]; then
+# Verificacao TypeScript do frontend (via node_modules local, sem npx)
+TSC="src/Visiosys.Frontend/node_modules/.bin/tsc"
+if [ -f "$TSC" ]; then
   log "Verificacao TypeScript do frontend..."
-  if ! (cd src/Visiosys.Frontend && npx tsc --noEmit 2>&1); then
+  if ! (cd src/Visiosys.Frontend && node_modules/.bin/tsc --noEmit 2>&1); then
     fail "Erro de tipagem TypeScript no frontend. Corrija antes de fazer push."
   fi
   log "TypeScript OK."
+else
+  log "node_modules nao encontrado — pulando verificacao TypeScript (rode npm install em src/Visiosys.Frontend)."
 fi
 
 log ""
