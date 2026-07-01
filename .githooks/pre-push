@@ -11,7 +11,7 @@ JOB="build-and-test"
 
 log() { echo "[pre-push] $*"; }
 
-# Localiza act (PATH ou instalação padrão do winget no Windows)
+# Localiza act (PATH ou instalacao padrao do winget no Windows)
 find_act() {
   command -v act 2>/dev/null && return
   local winget_base="$LOCALAPPDATA/Microsoft/WinGet/Packages"
@@ -34,8 +34,11 @@ if ! docker info > /dev/null 2>&1; then
   exit 0
 fi
 
-log "Iniciando CI local (act v$("$ACT" --version | awk '{print $3}'))..."
-log "Imagem: catthehacker/ubuntu:act-latest (download ~1.5GB na primeira execucao)"
+# Remove containers testcontainers estagnados de runs anteriores interrompidos
+docker ps -aq --filter "name=testcontainers-" | xargs -r docker rm -f > /dev/null 2>&1 || true
+
+log "Iniciando CI local (act $("$ACT" --version | awk '{print $3}'))..."
+log "Imagem: catthehacker/ubuntu:act-latest"
 log ""
 
 if "$ACT" -j "$JOB" --workflows "$WORKFLOW"; then
