@@ -41,6 +41,9 @@ docker-data/
 Thumbs.db
 .DS_Store
 
+## Dados pessoais (CV, perfil, referências)
+.felipe/
+
 ## Frontend
 src/Visiosys.Frontend/node_modules/
 src/Visiosys.Frontend/dist/
