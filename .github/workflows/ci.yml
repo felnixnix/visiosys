@@ -43,4 +43,8 @@ jobs:
         working-directory: src/Visiosys.Frontend
         run: |
           npm ci
-          npx tsc --noEmit
+          npx tsc -b
+
+      - name: Testes do Frontend (Vitest)
+        working-directory: src/Visiosys.Frontend
+        run: npm run test
