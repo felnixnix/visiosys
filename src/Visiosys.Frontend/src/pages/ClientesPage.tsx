@@ -13,15 +13,17 @@ export function ClientesPage() {
   const [dados, setDados] = useState<PaginaDto<ClienteDto> | null>(null);
   const [pagina, setPagina] = useState(1);
   const [erro, setErro] = useState('');
+  const [tentativa, setTentativa] = useState(0);
 
   useEffect(() => {
     let cancelado = false;
     setErro('');
+    setDados(null);
     clientesApi.listar(pagina)
       .then(res => { if (!cancelado) setDados(res); })
       .catch(() => { if (!cancelado) setErro('Erro ao carregar clientes.'); });
     return () => { cancelado = true; };
-  }, [pagina]);
+  }, [pagina, tentativa]);
 
   const totalPaginas = dados ? Math.ceil(dados.total / dados.tamanho) : 0;
 
@@ -32,9 +34,14 @@ export function ClientesPage() {
         <Link to="/clientes/novo" className="btn-primary">+ Novo</Link>
       </div>
 
-      {erro && <p className="erro">{erro}</p>}
-
-      {!dados ? (
+      {erro ? (
+        <div className="estado-erro">
+          <p className="erro">{erro}</p>
+          <button className="btn-secondary" onClick={() => setTentativa(t => t + 1)}>
+            Tentar novamente
+          </button>
+        </div>
+      ) : !dados ? (
         <p className="carregando">Carregando…</p>
       ) : dados.items.length === 0 ? (
         <p className="vazio">Nenhum cliente cadastrado.</p>
