@@ -1,2 +1,2 @@
 -P ubuntu-latest=catthehacker/ubuntu:act-latest
---pull=missing
+--pull=false
