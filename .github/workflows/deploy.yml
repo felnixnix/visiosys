@@ -19,6 +19,7 @@ on:
       - "**.md"
       - "docs/**"
       - ".ia/**"
+      - "tests/**"
       - "infra/scripts/seed.py"
 
 jobs:
