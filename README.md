@@ -6,7 +6,22 @@
 [![Deploy](https://github.com/felnixnix/visiosys/actions/workflows/deploy.yml/badge.svg)](https://github.com/felnixnix/visiosys/actions/workflows/deploy.yml)
 [![Sistema](https://img.shields.io/website?url=https%3A%2F%2Ffelipedearaujo.dev%2Fvisiosys%2Fhealth&label=sistema&up_message=online&down_message=offline&up_color=22c55e&down_color=ef4444)](https://felipedearaujo.dev/visiosys)
 
-**Demo ao vivo:** https://felipedearaujo.dev/visiosys
+**Demo ao vivo:** https://felipedearaujo.dev/visiosys — acesso demo: `user` / `user`
+
+---
+
+## Demonstração
+
+<table>
+  <tr>
+    <td width="50%"><b>Lista de precatórios</b><br/><img src="docs/img/02-precatorios.png" alt="Lista de precatórios"/></td>
+    <td width="50%"><b>Dashboard de observabilidade</b><br/><img src="docs/img/03-logs.png" alt="Dashboard de logs"/></td>
+  </tr>
+  <tr>
+    <td width="50%"><b>Detalhe do precatório</b><br/><img src="docs/img/04-detalhe.png" alt="Detalhe do precatório"/></td>
+    <td width="50%"><b>Tour guiado embutido</b><br/><img src="docs/img/05-tour.png" alt="Tour guiado"/></td>
+  </tr>
+</table>
 
 ---
 
