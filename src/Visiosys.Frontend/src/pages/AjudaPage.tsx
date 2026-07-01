@@ -2,7 +2,7 @@ export function AjudaPage() {
   return (
     <div>
       <div className="page-header">
-        <h2>Ajuda</h2>
+        <h2>Ajuda/API</h2>
       </div>
 
       <div className="form">
@@ -21,9 +21,12 @@ export function AjudaPage() {
         <p>
           A documentação completa dos endpoints (formato OpenAPI/Swagger) fica em{' '}
           <a href={`${import.meta.env.BASE_URL}swagger`} target="_blank" rel="noopener noreferrer">/swagger</a>.
-          O acesso exige login com as mesmas credenciais de acesso ao sistema
-          (inclusive a conta de demonstração <code>user</code> / <code>user</code>).
+          O acesso exige login com as mesmas credenciais de acesso ao sistema.
         </p>
+        <div className="demo-hint">
+          <strong>Acesso à API</strong>
+          <span>Login: <code>user</code> &nbsp;&middot;&nbsp; Senha: <code>user</code></span>
+        </div>
       </div>
     </div>
   );

@@ -127,7 +127,7 @@ export function Layout({ children }: { children: ReactNode }) {
           <Link to="/" data-tour="nav-precatorios">Precatórios</Link>
           <Link to="/clientes" data-tour="nav-clientes">Clientes</Link>
           <Link to="/logs" data-tour="nav-logs">Logs</Link>
-          <Link to="/ajuda" data-tour="nav-ajuda">Ajuda</Link>
+          <Link to="/ajuda" data-tour="nav-ajuda">Ajuda/API</Link>
           <span
             className="status-saude"
             data-status={saude}
