@@ -36,10 +36,20 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    builder.Host.UseSerilog((ctx, services, config) => config
-        .ReadFrom.Configuration(ctx.Configuration)
-        .ReadFrom.Services(services)
-        .Enrich.FromLogContext());
+    builder.Host.UseSerilog((ctx, services, config) =>
+    {
+        config.ReadFrom.Configuration(ctx.Configuration)
+            .ReadFrom.Services(services)
+            .Enrich.FromLogContext();
+
+        // Sink MongoDB próprio (ver ADR-025): grava logs na coleção "logs"
+        // do mesmo banco usado pela auditoria, reaproveitando a connection
+        // string já configurada. Só é ativado quando o Mongo está presente,
+        // então ambientes sem Mongo continuam funcionando.
+        var mongo = ctx.Configuration.GetConnectionString("Mongo");
+        if (!string.IsNullOrWhiteSpace(mongo))
+            config.WriteTo.MongoDbLogs(mongo, "logs");
+    });
 
     builder.Services.AddControllers()
         .AddJsonOptions(o =>
@@ -234,6 +244,10 @@ try
 catch (Exception ex)
 {
     Log.Fatal(ex, "A aplicação falhou ao iniciar.");
+    // Relança para o processo sair com código != 0. Sem isto, uma falha de
+    // startup era engolida (exit 0), o systemd reiniciava em loop e o health
+    // gate do deploy não detectava o problema.
+    throw;
 }
 finally
 {
