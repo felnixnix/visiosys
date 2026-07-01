@@ -1,22 +1,17 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import Joyride, { type CallBackProps, STATUS } from 'react-joyride';
+import { Joyride, STATUS, type EventData } from 'react-joyride';
 import { useAuth } from '../contexts/AuthContext';
 import { passosTour } from '../tour/steps';
 import type { ReactNode } from 'react';
 
 const CHAVE_TOUR = 'visiosys_tour_feito';
 
-const estilosTour = {
-  options: {
-    primaryColor: '#1d4ed8',
-    zIndex: 1000,
-    arrowColor: '#fff',
-    backgroundColor: '#fff',
-    overlayColor: 'rgba(0,0,0,0.45)',
-    textColor: '#1f2937',
-    width: 320,
-  },
+const opcoesTour = {
+  primaryColor: '#1d4ed8',
+  zIndex: 1000,
+  overlayColor: 'rgba(0,0,0,0.45)',
+  buttons: ['back', 'primary', 'skip'] as const,
 };
 
 const localeTour = {
@@ -40,7 +35,7 @@ export function Layout({ children }: { children: ReactNode }) {
     }
   }, [location.pathname]);
 
-  function handleTourCallback(data: CallBackProps) {
+  function handleTourEvento(data: EventData) {
     if (data.status === STATUS.FINISHED || data.status === STATUS.SKIPPED) {
       localStorage.setItem(CHAVE_TOUR, '1');
       setRodandoTour(false);
@@ -66,12 +61,11 @@ export function Layout({ children }: { children: ReactNode }) {
       <Joyride
         steps={passosTour}
         run={rodandoTour}
-        callback={handleTourCallback}
+        onEvent={handleTourEvento}
         continuous
-        showSkipButton
         scrollToFirstStep
         locale={localeTour}
-        styles={estilosTour}
+        options={opcoesTour}
       />
       <header className="header">
         <Link to="/" className="logo">Visiosys</Link>
