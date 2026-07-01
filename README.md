@@ -4,6 +4,7 @@
 
 [![CI](https://github.com/felnixnix/visiosys/actions/workflows/ci.yml/badge.svg)](https://github.com/felnixnix/visiosys/actions/workflows/ci.yml)
 [![Deploy](https://github.com/felnixnix/visiosys/actions/workflows/deploy.yml/badge.svg)](https://github.com/felnixnix/visiosys/actions/workflows/deploy.yml)
+[![Sistema](https://img.shields.io/website?url=https%3A%2F%2Ffelipedearaujo.dev%2Fvisiosys%2Fhealth&label=sistema&up_message=online&down_message=offline&up_color=22c55e&down_color=ef4444)](https://felipedearaujo.dev/visiosys)
 
 **Demo ao vivo:** https://felipedearaujo.dev/visiosys
 

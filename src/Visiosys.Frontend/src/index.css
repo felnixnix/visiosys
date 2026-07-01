@@ -34,6 +34,27 @@ body { margin: 0; }
 
 .main { flex: 1; padding: 1.5rem; max-width: 1200px; margin: 0 auto; width: 100%; }
 
+/* Status de saúde do sistema */
+.status-saude {
+  display: flex; align-items: center; gap: .35rem;
+  font-size: .75rem; color: rgba(255,255,255,.75); user-select: none;
+  cursor: default;
+}
+.status-saude::before {
+  content: ''; display: inline-block;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: rgba(255,255,255,.4);
+}
+.status-saude[data-status="online"]::before {
+  background: #4ade80;
+  animation: pulso-saude 2.5s ease-in-out infinite;
+}
+.status-saude[data-status="offline"]::before { background: #f87171; }
+@keyframes pulso-saude {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .4; }
+}
+
 /* Login */
 .login-container {
   min-height: 100vh; display: flex; align-items: center; justify-content: center;

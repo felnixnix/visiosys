@@ -138,7 +138,8 @@ try
 
     // Health Checks (RNF13)
     builder.Services.AddHealthChecks()
-        .AddNpgSql(builder.Configuration.GetConnectionString("Postgres")!, name: "postgres");
+        .AddNpgSql(builder.Configuration.GetConnectionString("Postgres")!, name: "postgres")
+        .AddMongoDb(builder.Configuration.GetConnectionString("Mongo")!, name: "mongodb");
 
     var app = builder.Build();
 
@@ -204,7 +205,23 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();
-    app.MapHealthChecks("/health");
+    app.MapHealthChecks("/health", new HealthCheckOptions
+    {
+        ResponseWriter = async (ctx, report) =>
+        {
+            ctx.Response.ContentType = "application/json";
+            await ctx.Response.WriteAsJsonAsync(new
+            {
+                status = report.Status.ToString(),
+                checks = report.Entries.Select(e => new
+                {
+                    name = e.Key,
+                    status = e.Value.Status.ToString(),
+                    ms = Math.Round(e.Value.Duration.TotalMilliseconds, 1)
+                })
+            });
+        }
+    });
 
     // Fallback para React Router — rotas client-side como /precatorios/novo
     // ao receber F5 retornam index.html em vez de 404

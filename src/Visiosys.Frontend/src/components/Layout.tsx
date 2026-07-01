@@ -6,6 +6,9 @@ import { passosTour } from '../tour/steps';
 import type { ReactNode } from 'react';
 
 const CHAVE_TOUR = 'visiosys_tour_feito';
+const HEALTH_URL = `${import.meta.env.BASE_URL}health`;
+
+type StatusSaude = 'verificando' | 'online' | 'offline';
 
 const opcoesTour = {
   primaryColor: '#1d4ed8',
@@ -27,6 +30,21 @@ export function Layout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [rodandoTour, setRodandoTour] = useState(false);
+  const [saude, setSaude] = useState<StatusSaude>('verificando');
+
+  useEffect(() => {
+    async function verificar() {
+      try {
+        const res = await fetch(HEALTH_URL);
+        setSaude(res.ok ? 'online' : 'offline');
+      } catch {
+        setSaude('offline');
+      }
+    }
+    verificar();
+    const id = setInterval(verificar, 30_000);
+    return () => clearInterval(id);
+  }, []);
 
   useEffect(() => {
     if (location.pathname === '/' && !localStorage.getItem(CHAVE_TOUR)) {
@@ -73,6 +91,17 @@ export function Layout({ children }: { children: ReactNode }) {
           <Link to="/" data-tour="nav-precatorios">Precatórios</Link>
           <Link to="/clientes" data-tour="nav-clientes">Clientes</Link>
           <Link to="/ajuda" data-tour="nav-ajuda">Ajuda</Link>
+          <span
+            className="status-saude"
+            data-status={saude}
+            title={
+              saude === 'online' ? 'Sistema operacional — PostgreSQL e MongoDB respondendo'
+              : saude === 'offline' ? 'Serviço indisponível'
+              : 'Verificando...'
+            }
+          >
+            {saude === 'online' ? 'online' : saude === 'offline' ? 'offline' : '...'}
+          </span>
           <button
             className="btn-tour"
             onClick={handleIniciarTour}
