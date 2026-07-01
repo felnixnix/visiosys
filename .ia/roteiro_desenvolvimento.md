@@ -36,7 +36,7 @@ Infraestrutura e produção (provisionada via Terraform, em `sa-east-1`):
 * Bootstrap da instância (`infra/scripts/user_data.sh`): .NET runtime, MongoDB 8, nginx (reverse proxy), AWS CLI e serviços systemd (`visiosys-api`, `visiosys-worker`).
 * **Deploy automatizado via AWS SSM + OIDC** (ver [ADR-021](../docs/adr/ADR-021-deploy-ssm-oidc.md)) — sem porta SSH aberta para o CI; migrations aplicadas no startup.
 * **Domínio público com HTTPS:** `https://felipedearaujo.dev/visiosys`, roteamento por path com `UsePathBase` + certificado Let's Encrypt via certbot (ver [ADR-023](../docs/adr/ADR-023-dominio-felipedearaujo-dev.md)) — fecha a pendência de HTTPS da Fase 5.
-* 26 ADRs documentando as decisões arquiteturais em `docs/adr/`.
+* 27 ADRs documentando as decisões arquiteturais em `docs/adr/`.
 * **Correções pós-deploy validadas em produção:** serialização de enums como string (`JsonStringEnumConverter`, alinhado ao contrato esperado pelo frontend) e normalização de datas para UTC em `RegistrarPagamentoUseCase` (PostgreSQL `timestamptz` exige `DateTimeKind.Utc`).
 * **Seeder de dados mock** (`infra/scripts/seed.py`): popula clientes, precatórios, andamentos e pagamentos via API real (não INSERT direto), com CPF/CNPJ válidos e idempotência — usado para validar o comportamento real da plataforma no ambiente de estudos. Execução: `scp` para a instância + `sudo python3 seed.py` (lê credenciais admin de `/etc/visiosys/production.env`).
 

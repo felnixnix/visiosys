@@ -86,7 +86,7 @@ src/
 
 Persistência **poliglota** por design: PostgreSQL guarda o que precisa de consistência transacional (precatórios, pagamentos), MongoDB guarda o histórico de auditoria (mais flexível, append-heavy) e S3 guarda os arquivos binários. Nenhum deles tenta fazer o trabalho do outro.
 
-As decisões arquiteturais relevantes (e as alternativas descartadas) estão registradas como **Architecture Decision Records** em [`docs/adr/`](docs/adr/): atualmente 26 ADRs, desde a escolha de DDD até o mecanismo de deploy em produção.
+As decisões arquiteturais relevantes (e as alternativas descartadas) estão registradas como **Architecture Decision Records** em [`docs/adr/`](docs/adr/): atualmente 27 ADRs, desde a escolha de DDD até os trade-offs deliberados de MVP.
 
 ---
 
