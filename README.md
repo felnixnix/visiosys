@@ -45,12 +45,12 @@ Está implantado e rodando em uma instância AWS real (não é só `localhost`);
 | Armazenamento de arquivos | AWS S3 |
 | Background jobs | .NET `BackgroundService` + `Microsoft.Extensions.Http.Resilience` (retry, backoff, circuit breaker) |
 | Autenticação | JWT Bearer + Rate Limiting nativo do .NET 8 |
-| Observabilidade | Serilog → Seq (logs estruturados) |
+| Observabilidade | Serilog → Seq + MongoDB (logs estruturados, com dashboard de observabilidade no próprio sistema) |
 | Frontend | React 19 + TypeScript + Vite + React Router |
 | Ambiente local | Docker + Docker Compose (PostgreSQL, MongoDB e Seq para desenvolvimento) |
 | Testes | xUnit + Testcontainers (PostgreSQL/MongoDB reais em container, não mocks) |
 | Infraestrutura | Terraform (IaC), EC2 ARM Graviton2, RDS PostgreSQL, S3, Route 53, nginx (reverse proxy), Let's Encrypt/certbot (TLS) |
-| CI/CD | GitHub Actions: build, testes e deploy via AWS SSM com autenticação OIDC (sem chaves AWS estáticas, sem porta SSH aberta para o CI) |
+| CI/CD | GitHub Actions: build, testes e deploy via AWS SSM com autenticação OIDC (sem chaves AWS estáticas, sem porta SSH aberta para o CI). Validação local antes do push via hook `pre-push` (build + testes) e simulação completa do pipeline com [act](https://github.com/nektos/act) |
 
 Decisão deliberada: priorizar recursos **nativos** do ecossistema .NET (rate limiting, resiliência HTTP, health checks) em vez de bibliotecas de terceiros, sempre que o nativo resolve sem perda de robustez.
 
@@ -70,7 +70,7 @@ src/
 
 Persistência **poliglota** por design: PostgreSQL guarda o que precisa de consistência transacional (precatórios, pagamentos), MongoDB guarda o histórico de auditoria (mais flexível, append-heavy) e S3 guarda os arquivos binários. Nenhum deles tenta fazer o trabalho do outro.
 
-As decisões arquiteturais relevantes (e as alternativas descartadas) estão registradas como **Architecture Decision Records** em [`docs/adr/`](docs/adr/): atualmente 23 ADRs, desde a escolha de DDD até o mecanismo de deploy em produção.
+As decisões arquiteturais relevantes (e as alternativas descartadas) estão registradas como **Architecture Decision Records** em [`docs/adr/`](docs/adr/): atualmente 26 ADRs, desde a escolha de DDD até o mecanismo de deploy em produção.
 
 ---
 
@@ -132,6 +132,8 @@ bash scripts/validate-ci.sh
 ```
 
 Para pular a validação em um push específico: `git push --no-verify`
+
+A estratégia em duas camadas (hook rápido no push + simulação completa sob demanda) está documentada no [ADR-024](docs/adr/ADR-024-ci-local-act.md).
 
 ---
 
