@@ -56,3 +56,8 @@ src/Visiosys.Frontend/node_modules/
 src/Visiosys.Frontend/dist/
 src/Visiosys.Api/wwwroot/assets/
 src/Visiosys.Api/wwwroot/index.html
+
+## Playwright (E2E) — artefatos de execução
+src/Visiosys.Frontend/test-results/
+src/Visiosys.Frontend/playwright-report/
+src/Visiosys.Frontend/playwright/.cache/
