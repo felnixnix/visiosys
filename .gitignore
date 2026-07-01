@@ -37,6 +37,9 @@ docker-data/
 .idea/
 .vscode/
 
+## Ferramentas locais (config de máquina, não versionar)
+.claude/
+
 ## OS
 Thumbs.db
 .DS_Store
