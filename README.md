@@ -16,12 +16,15 @@
 
 <table>
   <tr>
-    <td width="50%"><b>Lista de precatórios</b><br/><img src="docs/img/02-precatorios.png" alt="Lista de precatórios"/></td>
-    <td width="50%"><b>Dashboard de observabilidade</b><br/><img src="docs/img/03-logs.png" alt="Dashboard de logs"/></td>
+    <td width="50%"><b>Precatórios — lista e busca</b><br/><img src="docs/img/02-precatorios.png" alt="Lista e busca de precatórios"/></td>
+    <td width="50%"><b>Busca de clientes (A-Z + filtros)</b><br/><img src="docs/img/clientes-busca.png" alt="Busca de clientes"/></td>
   </tr>
   <tr>
+    <td width="50%"><b>Dashboard de observabilidade</b><br/><img src="docs/img/03-logs.png" alt="Dashboard de logs"/></td>
     <td width="50%"><b>Detalhe do precatório</b><br/><img src="docs/img/04-detalhe.png" alt="Detalhe do precatório"/></td>
-    <td width="50%"><b>Tour guiado embutido</b><br/><img src="docs/img/05-tour.png" alt="Tour guiado"/></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><b>Tour guiado embutido</b><br/><img src="docs/img/05-tour.png" width="70%" alt="Tour guiado"/></td>
   </tr>
 </table>
 
