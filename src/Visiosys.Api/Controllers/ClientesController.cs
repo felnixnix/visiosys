@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Visiosys.Application.Clientes;
 using Visiosys.Application.Precatorios;
+using Visiosys.Domain.Clientes;
 
 namespace Visiosys.Api.Controllers;
 
@@ -16,11 +17,16 @@ public class ClientesController(
     [HttpGet]
     [ProducesResponseType(typeof(PaginaDto<ClienteDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> Listar(
+        [FromQuery] string? nome = null,
+        [FromQuery] string? documento = null,
+        [FromQuery] string? tipo = null,
+        [FromQuery] string? letra = null,
         [FromQuery] int pagina = 1,
         [FromQuery] int tamanho = 20,
         CancellationToken ct = default)
     {
-        var resultado = await listarUseCase.ExecutarAsync(pagina, tamanho, ct);
+        var filtro = new FiltroClientes(nome, documento, tipo, letra);
+        var resultado = await listarUseCase.ExecutarAsync(filtro, pagina, tamanho, ct);
         return Ok(resultado);
     }
 

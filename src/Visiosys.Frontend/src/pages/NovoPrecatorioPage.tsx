@@ -24,7 +24,7 @@ export function NovoPrecatorioPage() {
   const [carregando, setCarregando] = useState(false);
 
   useEffect(() => {
-    clientesApi.listar(1, 100)
+    clientesApi.listar({}, 1, 100)
       .then(res => setClientes(res.items))
       .catch(() => {/* lista vazia — seletor fica opcional */});
   }, []);
