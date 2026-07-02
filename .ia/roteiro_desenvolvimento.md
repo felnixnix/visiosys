@@ -26,6 +26,7 @@ Backend e domínio:
 * Domínio rico: `Precatorio` (criação, atualização de valor, cálculo de deságio, transição de status), `Cliente`, `Documento`, `Andamento`, `Pagamento` — com associação Cliente↔Precatório.
 * Persistência poliglota: PostgreSQL (EF Core, concorrência otimista via `xmin`), MongoDB (auditoria LGPD) e S3 (documentos).
 * Autenticação JWT + rate limiting nativo, Health Checks (`/health`), logging estruturado (Serilog) e Worker de captura com resiliência HTTP.
+* Busca e filtros server-side nas listagens (precatórios por número/tribunal/esfera/status/natureza; clientes por nome/documento/tipo/inicial), com a contagem de paginação usando o mesmo filtro.
 * Suíte de testes xUnit (domínio + integração com Testcontainers) verde no CI.
 
 Frontend:
@@ -36,7 +37,7 @@ Infraestrutura e produção (provisionada via Terraform, em `sa-east-1`):
 * Bootstrap da instância (`infra/scripts/user_data.sh`): .NET runtime, MongoDB 8, nginx (reverse proxy), AWS CLI e serviços systemd (`visiosys-api`, `visiosys-worker`).
 * **Deploy automatizado via AWS SSM + OIDC** (ver [ADR-021](../docs/adr/ADR-021-deploy-ssm-oidc.md)) — sem porta SSH aberta para o CI; migrations aplicadas no startup.
 * **Domínio público com HTTPS:** `https://felipedearaujo.dev/visiosys`, roteamento por path com `UsePathBase` + certificado Let's Encrypt via certbot (ver [ADR-023](../docs/adr/ADR-023-dominio-felipedearaujo-dev.md)) — fecha a pendência de HTTPS da Fase 5.
-* 27 ADRs documentando as decisões arquiteturais em `docs/adr/`.
+* 28 ADRs documentando as decisões arquiteturais em `docs/adr/`.
 * **Correções pós-deploy validadas em produção:** serialização de enums como string (`JsonStringEnumConverter`, alinhado ao contrato esperado pelo frontend) e normalização de datas para UTC em `RegistrarPagamentoUseCase` (PostgreSQL `timestamptz` exige `DateTimeKind.Utc`).
 * **Seeder de dados mock** (`infra/scripts/seed.py`): popula clientes, precatórios, andamentos e pagamentos via API real (não INSERT direto), com CPF/CNPJ válidos e idempotência — usado para validar o comportamento real da plataforma no ambiente de estudos. Execução: `scp` para a instância + `sudo python3 seed.py` (lê credenciais admin de `/etc/visiosys/production.env`).
 

@@ -49,6 +49,7 @@ O Visiosys digitaliza esse fluxo de ponta a ponta:
 - **Upload de documentos** (procurações, certidões) armazenados fora do servidor, em object storage.
 - **Captura automática de andamentos** via Worker em background, com tolerância a falhas de fontes externas instáveis.
 - **Trilha de auditoria**: todo acesso ou alteração a dado sensível é registrado para conformidade com a LGPD.
+- **Busca e filtros nas listagens**: precatórios por número, tribunal, esfera, status e natureza; clientes por nome, documento, tipo (PF/PJ) e inicial (A-Z), com a filtragem feita no servidor.
 
 Está implantado e rodando em uma instância AWS real (não é só `localhost`); veja a [seção de produção](#ambiente-em-produção).
 
@@ -91,7 +92,7 @@ src/
 
 Persistência **poliglota** por design: PostgreSQL guarda o que precisa de consistência transacional (precatórios, pagamentos), MongoDB guarda o histórico de auditoria (mais flexível, append-heavy) e S3 guarda os arquivos binários. Nenhum deles tenta fazer o trabalho do outro.
 
-As decisões arquiteturais relevantes (e as alternativas descartadas) estão registradas como **Architecture Decision Records** em [`docs/adr/`](docs/adr/): atualmente 27 ADRs, desde a escolha de DDD até os trade-offs deliberados de MVP.
+As decisões arquiteturais relevantes (e as alternativas descartadas) estão registradas como **Architecture Decision Records** em [`docs/adr/`](docs/adr/): atualmente 28 ADRs, desde a escolha de DDD até os trade-offs deliberados de MVP.
 
 ---
 
