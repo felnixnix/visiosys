@@ -82,9 +82,9 @@ internal sealed class FakePrecatorioConsultaRepo : IPrecatorioConsultaRepository
     public void Adicionar(Precatorio p) => _store.Add(p);
     public Task<IReadOnlyList<Precatorio>> ListarAtivosAsync(CancellationToken ct = default)
         => Task.FromResult<IReadOnlyList<Precatorio>>(_store.ToList());
-    public Task<IReadOnlyList<Precatorio>> ListarAsync(int skip = 0, int take = 50, CancellationToken ct = default)
+    public Task<IReadOnlyList<Precatorio>> ListarAsync(FiltroPrecatorios filtro, int skip = 0, int take = 50, CancellationToken ct = default)
         => Task.FromResult<IReadOnlyList<Precatorio>>(_store.Skip(skip).Take(take).ToList());
-    public Task<int> ContarAsync(CancellationToken ct = default)
+    public Task<int> ContarAsync(FiltroPrecatorios filtro, CancellationToken ct = default)
         => Task.FromResult(_store.Count);
 }
 

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Visiosys.Application.Precatorios;
+using Visiosys.Domain.Precatorios.Enums;
+using Visiosys.Domain.Precatorios.Queries;
 
 namespace Visiosys.Api.Controllers;
 
@@ -15,11 +17,17 @@ public class PrecatoriosController(
     [HttpGet]
     [ProducesResponseType(typeof(PaginaDto<PrecatorioDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> Listar(
+        [FromQuery] string? numero = null,
+        [FromQuery] string? tribunal = null,
+        [FromQuery] EsferaPrecatorio? esfera = null,
+        [FromQuery] StatusPrecatorio? status = null,
+        [FromQuery] NaturezaPrecatorio? natureza = null,
         [FromQuery] int pagina = 1,
         [FromQuery] int tamanho = 20,
         CancellationToken ct = default)
     {
-        var resultado = await listarUseCase.ExecutarAsync(pagina, tamanho, ct);
+        var filtro = new FiltroPrecatorios(numero, tribunal, esfera, status, natureza);
+        var resultado = await listarUseCase.ExecutarAsync(filtro, pagina, tamanho, ct);
         return Ok(resultado);
     }
 
