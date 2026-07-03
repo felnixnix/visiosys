@@ -138,6 +138,7 @@ body { margin: 0; }
 
 /* Feedback */
 .erro    { color: var(--danger); font-size: .85rem; margin: .5rem 0; }
+.aviso   { color: var(--warning); background: #fffbeb; border: 1px solid #fde68a; border-radius: var(--radius); padding: .5rem .75rem; font-size: .85rem; margin: .5rem 0; text-align: center; }
 .carregando, .vazio { color: var(--gray-600); padding: 2rem; text-align: center; }
 .estado-erro { display: flex; flex-direction: column; align-items: center; gap: .75rem; padding: 2rem; text-align: center; }
 .estado-erro .erro { margin: 0; }

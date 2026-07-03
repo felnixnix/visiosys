@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../api/auth';
 import { ApiError } from '../api/client';
@@ -29,9 +29,17 @@ export function LoginPage() {
   const [senha, setSenha] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [erro, setErro] = useState('');
+  const [aviso, setAviso] = useState('');
   const [carregando, setCarregando] = useState(false);
   const { entrar } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (sessionStorage.getItem('visiosys_sessao_expirada')) {
+      setAviso('Sua sessão expirou. Faça login novamente.');
+      sessionStorage.removeItem('visiosys_sessao_expirada');
+    }
+  }, []);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -57,6 +65,7 @@ export function LoginPage() {
       <div className="login-card">
         <h1>Visiosys</h1>
         <p className="subtitle">Sistema de Gestão de Precatórios</p>
+        {aviso && <p className="aviso">{aviso}</p>}
         <form onSubmit={handleSubmit}>
           <div className="field">
             <label htmlFor="login">Login</label>
